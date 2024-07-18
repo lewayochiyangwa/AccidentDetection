@@ -1,0 +1,6 @@
+<resources>
+    <color name="colorPrimary">#6A1818</color>
+    <color name="colorPrimaryDark">#6A1818</color>
+    <color name="colorAccent">#FFFFFF</color>
+    <!-- Add more colors as needed -->
+</resources>

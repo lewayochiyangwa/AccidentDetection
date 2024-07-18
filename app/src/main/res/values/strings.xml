@@ -1,0 +1,24 @@
+<resources>
+    <string name="accelerometer_placeholder">Accelerometer Data</string>
+    <string name="decibel_placeholder">decibel_ placeholdera</string>
+    <string name="app_name">FinalYearProject</string>
+    <string name="menu">Menu</string>
+    <string name="start_detection">Start Detection</string>
+    <string name="stop_detection">Stop Detection</string>
+    <string name="accident_detected">Accident Detected!</string>
+    <string name="timer">Timer: 2 minutes</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
+    <string name="accelerometer_data">Accelerometer Data:\nX: %1$.2f\nY: %2$.2f\nZ: %3$.2f</string>
+    <string name="decibel_data">Decibel Data Placeholder</string>
+    <string name="sine_wave_animation">Sine Wave Animation</string>
+    <string name="accelerometer_image">Accelerometer Image</string>
+    <string name="decibel_meter_image">Decibel Meter Image</string>
+    <string name="full_name">Full Name</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="phone">Phone</string>
+    <string name="allergies">Allergies</string>
+    <string name="insurance_info">Insurance Info</string>
+    <string name="emergency_contact">Emergency Contact</string>
+</resources>
