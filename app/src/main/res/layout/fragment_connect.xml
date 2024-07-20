@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ConnectFragment"
+    >-->
+
+  <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ConnectFragment"
+        >
+
+  <RelativeLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent">
+
+
+    <!-- Accident Detection Interface -->
+    <LinearLayout
+        android:id="@+id/detection_interface"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="36dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="11dp"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+      <Button
+          android:id="@+id/start_detection_button"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:text="@string/start_detection"
+          android:backgroundTint="@color/colorPrimaryDark"
+          android:textColor="@android:color/white" />
+
+      <LinearLayout
+          android:id="@+id/sensor_data_layout"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="16dp"
+          android:orientation="vertical"
+          android:visibility="gone">
+
+        <TextView
+            android:id="@+id/accelerometer_data"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/accelerometer_data"
+            android:layout_marginBottom="8dp"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/decibel_data"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/decibel_data"
+            android:textColor="@android:color/black"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+      </LinearLayout>
+
+      <Button
+          android:id="@+id/stop_detection_button"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="16dp"
+          android:text="@string/stop_detection"
+          android:visibility="gone"
+          android:background="@color/colorPrimaryDark"
+          android:textColor="@android:color/white" />
+    </LinearLayout>
+
+    <!-- Accident Detected Alert -->
+    <LinearLayout
+        android:id="@+id/accident_alert_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/detection_interface"
+        android:layout_margin="16dp"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="@drawable/border"
+        android:visibility="gone">
+
+      <TextView
+          android:id="@+id/accident_detected_message"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="@string/accident_detected"
+          android:textSize="18sp"
+          android:textColor="@android:color/holo_red_dark"
+          android:layout_gravity="center_horizontal" />
+
+      <TextView
+          android:id="@+id/confirmation_timer"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:text="@string/timer"
+          android:textSize="18sp"
+          android:textColor="@android:color/holo_red_dark"
+          android:layout_gravity="center_horizontal"
+          android:layout_marginTop="8dp" />
+
+      <LinearLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:orientation="horizontal"
+          android:layout_gravity="center_horizontal"
+          android:layout_marginTop="16dp">
+
+        <Button
+            android:id="@+id/confirm_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/confirm"
+            android:background="@color/colorPrimaryDark"
+            android:textColor="@android:color/white" />
+
+        <Button
+            android:id="@+id/cancel_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/cancel"
+            android:layout_marginStart="16dp"
+            android:background="@color/colorPrimaryDark"
+            android:textColor="@android:color/white" />
+      </LinearLayout>
+    </LinearLayout>
+
+    <!-- Sensor Images with placeholders -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@id/detection_interface"
+        android:layout_marginTop="16dp"
+        android:padding="16dp"
+        android:gravity="center_horizontal">
+
+      <!-- Accelerometer Placeholder -->
+      <FrameLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:background="@drawable/border"
+          android:padding="8dp">
+
+        <ImageView
+            android:id="@+id/accelerometer_image"
+            android:layout_width="54dp"
+            android:layout_height="54dp"
+            android:src="@drawable/img_1"
+            android:contentDescription="@string/accelerometer_image" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="8dp"
+            android:text="@string/accelerometer_placeholder"
+            android:textColor="@android:color/black"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+      </FrameLayout>
+
+      <!-- Decibel Placeholder -->
+      <FrameLayout
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="16dp"
+          android:background="@drawable/border"
+          android:padding="8dp">
+        <ImageView
+            android:id="@+id/decibel_meter_image"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:src="@drawable/img_2"
+            android:contentDescription="@string/decibel_meter_image" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/decibel_placeholder"
+            android:textColor="@android:color/black"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_gravity="center"
+            android:layout_marginTop="8dp" />
+      </FrameLayout>
+
+      <Button
+          android:id="@+id/accidents_list_button"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="56dp"
+          android:backgroundTint="@color/colorPrimaryDark"
+          android:text="Accidents List"
+          android:textColor="@android:color/white" />
+
+      <Button
+          android:id="@+id/stop_detection_button_bottom"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="56dp"
+          android:backgroundTint="@color/colorPrimaryDark"
+          android:text="@string/stop_detection"
+          android:textColor="@android:color/white" />
+    </LinearLayout>
+  </RelativeLayout>
+
+</FrameLayout>

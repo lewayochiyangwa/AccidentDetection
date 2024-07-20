@@ -1,5 +1,7 @@
 package com.example.finalyearproject;
 
+import static androidx.core.content.ContextCompat.getSystemService;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Notification;
@@ -17,25 +19,27 @@ import android.location.LocationManager;
 import android.media.MediaRecorder;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.provider.Settings;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+
+import android.os.Handler;
+import android.os.Looper;
+import android.provider.Settings;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.finalyearproject.models.LocationPost;
 import com.example.finalyearproject.models.user;
@@ -58,12 +62,12 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
 
-public class AccidentDetectionActivity extends AppCompatActivity implements SensorEventListener {
+public class ConnectFragment extends Fragment implements SensorEventListener {
 
     DrawerLayout drawerLayout;
     NavigationView navigationView;
     ActionBarDrawerToggle actionBarDrawerToggle;
-    private Button goToListButton,startDetectionButton, stopDetectionButton, stopDetectionButtonBottom, confirmButton, cancelButton;
+    private Button goToListButton, startDetectionButton, stopDetectionButton, stopDetectionButtonBottom, confirmButton, cancelButton;
     private TextView accelerometerData, decibelData, accidentDetectedMessage, confirmationTimer;
     private LinearLayout sensorDataLayout, accidentAlertLayout, detectionInterface;
     private SensorManager sensorManager;
@@ -85,44 +89,47 @@ public class AccidentDetectionActivity extends AppCompatActivity implements Sens
         Call<Object> postAccidentLocation(@Body LocationPost locationPost);
     }
 
+    public ConnectFragment() {
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        // getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        setContentView(R.layout.activity_accident_detection);
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+
+        View rootView = inflater.inflate(R.layout.fragment_connect, container, false);
+
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext());
 
 
         int REQUEST_CODE = 123;
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             // Permission already granted
         } else {
             // Request permission
-            ActivityCompat.requestPermissions(this, new String[]{
+            requestPermissions(new String[]{
                     Manifest.permission.ACCESS_FINE_LOCATION,
                     Manifest.permission.RECORD_AUDIO
             }, REQUEST_CODE);
         }
 
         // Initialize views
-        goToListButton = findViewById(R.id.accidents_list_button);
-        startDetectionButton = findViewById(R.id.start_detection_button);
-        stopDetectionButton = findViewById(R.id.stop_detection_button);
-        stopDetectionButtonBottom = findViewById(R.id.stop_detection_button_bottom);
-        confirmButton = findViewById(R.id.confirm_button);
-        cancelButton = findViewById(R.id.cancel_button);
-        accelerometerData = findViewById(R.id.accelerometer_data);
-        decibelData = findViewById(R.id.decibel_data);
-        accidentDetectedMessage = findViewById(R.id.accident_detected_message);
-        confirmationTimer = findViewById(R.id.confirmation_timer);
-        sensorDataLayout = findViewById(R.id.sensor_data_layout);
-        accidentAlertLayout = findViewById(R.id.accident_alert_layout);
-        detectionInterface = findViewById(R.id.detection_interface);
+        goToListButton = rootView.findViewById(R.id.accidents_list_button);
+        startDetectionButton = rootView.findViewById(R.id.start_detection_button);
+        stopDetectionButton = rootView.findViewById(R.id.stop_detection_button);
+        stopDetectionButtonBottom = rootView.findViewById(R.id.stop_detection_button_bottom);
+        confirmButton = rootView.findViewById(R.id.confirm_button);
+        cancelButton = rootView.findViewById(R.id.cancel_button);
+        accelerometerData = rootView.findViewById(R.id.accelerometer_data);
+        decibelData = rootView.findViewById(R.id.decibel_data);
+        accidentDetectedMessage = rootView.findViewById(R.id.accident_detected_message);
+        confirmationTimer = rootView.findViewById(R.id.confirmation_timer);
+        sensorDataLayout = rootView.findViewById(R.id.sensor_data_layout);
+        accidentAlertLayout = rootView.findViewById(R.id.accident_alert_layout);
+        detectionInterface = rootView.findViewById(R.id.detection_interface);
 
         // Initialize Sensor Manager and Accelerometer
-        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        sensorManager = (SensorManager) requireContext().getSystemService(Context.SENSOR_SERVICE);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
         // Initialize Media Recorder
@@ -138,7 +145,7 @@ public class AccidentDetectionActivity extends AppCompatActivity implements Sens
 
         // Set up button listeners
         goToListButton.setOnClickListener(v -> {
-            Intent intent = new Intent(AccidentDetectionActivity.this, AccidentsListAttendanceActivity.class);
+            Intent intent = new Intent(requireContext(), AccidentsListAttendanceActivity.class);
             startActivity(intent);
         });
         startDetectionButton.setOnClickListener(v -> startDetection());
@@ -149,17 +156,18 @@ public class AccidentDetectionActivity extends AppCompatActivity implements Sens
 
         // Request necessary permissions
         requestPermissions();
+
+        return rootView;
     }
 
     private void requestPermissions() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED ||
-                ContextCompat.checkSelfPermission(this, Manifest.permission.BODY_SENSORS) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO, Manifest.permission.BODY_SENSORS}, PERMISSION_REQUEST_CODE);
+        if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED ||
+                ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.BODY_SENSORS) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{android.Manifest.permission.RECORD_AUDIO, android.Manifest.permission.BODY_SENSORS}, PERMISSION_REQUEST_CODE);
         }
     }
 
     private void startDetection() {
-        System.out.println("startDetection");
         if (isDetecting) return;
 
         // Start collecting sensor data
@@ -217,27 +225,60 @@ public class AccidentDetectionActivity extends AppCompatActivity implements Sens
         handler.postDelayed(() -> {
             accidentAlertLayout.setVisibility(View.GONE);
             // Send alert to emergency services
-            Toast.makeText(this, "Emergency services notified", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Emergency services notified", Toast.LENGTH_SHORT).show();
         }, 120000); // 2 minutes
     }
 
+    //===================================================================
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel("accident_detection", "Accident Detection", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationManager manager = requireContext().getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(channel);
+        }
+    }
+
+    private void showAccidentNotification() {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(requireContext(), "accident_detection")
+                .setContentTitle("Accident Detection")
+                .setSmallIcon(R.drawable.baseline_notifications_active_24)
+                .setAutoCancel(true)
+                .setContentText("Alert, Accident Might Have Happened!");
+
+        NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(requireContext());
+        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        notificationManagerCompat.notify(0, builder.build());
+    }
+
+    //==================================================================
     private void confirmAccident(View v) {
         accidentAlertLayout.setVisibility(View.GONE);
 
         //======================Firebase Notification====================================
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+        createNotificationChannel();
+        showAccidentNotification();
+       /* if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
             NotificationChannel channel = new NotificationChannel("accident_detection", "accident_detection", NotificationManager.IMPORTANCE_DEFAULT);
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(channel);
         }
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(AccidentDetectionActivity.this, "accident_detection")
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(requireContext(), "accident_detection")
                 .setContentTitle("Accident Detection")
                 .setSmallIcon(R.drawable.baseline_notifications_active_24)
                 .setAutoCancel(true)
                 .setContentText("Alert, Accident Might Have Happened !");
 
         notification = builder.build();
-        notificationManagerCompat = NotificationManagerCompat.from(AccidentDetectionActivity.this);
+        notificationManagerCompat = NotificationManagerCompat.from(requireContext());*/
 
         push(v);
         //=================================================================
@@ -276,7 +317,7 @@ public class AccidentDetectionActivity extends AppCompatActivity implements Sens
         }
 
         //==============================================================
-        Toast.makeText(this, "Emergency services notified", Toast.LENGTH_SHORT).show();
+        Toast.makeText(requireContext(), "Emergency services notified", Toast.LENGTH_SHORT).show();
     }
 
     private void cancelAccident() {
@@ -290,7 +331,7 @@ public class AccidentDetectionActivity extends AppCompatActivity implements Sens
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Permissions granted
             } else {
-                Toast.makeText(this, "Permissions are required to use this feature", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), "Permissions are required to use this feature", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -326,7 +367,7 @@ public class AccidentDetectionActivity extends AppCompatActivity implements Sens
                         }
                 );
             } else {
-                Toast.makeText(this, "Turn on location", Toast.LENGTH_LONG).show();
+                Toast.makeText(requireContext(), "Turn on location", Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                 startActivity(intent);
             }
@@ -343,7 +384,7 @@ public class AccidentDetectionActivity extends AppCompatActivity implements Sens
         mLocationRequest.setFastestInterval(0);
         mLocationRequest.setNumUpdates(1);
 
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext());
         mFusedLocationClient.requestLocationUpdates(
                 mLocationRequest, mLocationCallback,
                 Looper.myLooper()
@@ -364,27 +405,33 @@ public class AccidentDetectionActivity extends AppCompatActivity implements Sens
     };
 
     private boolean checkPermissions() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             return true;
         }
         return false;
     }
 
-    private void requestPermissions2() {
+  /*  private void requestPermissions2() {
         ActivityCompat.requestPermissions(
-                this,
-                new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION},
+                requireContext(),
+                new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION, android.Manifest.permission.ACCESS_FINE_LOCATION},
                 PERMISSION_ID
         );
-    }
+    }*/
 
-    private boolean isLocationEnabled() {
+   /* private boolean isLocationEnabled() {
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
                 LocationManager.NETWORK_PROVIDER
         );
-    }
+    }*/
+   private boolean isLocationEnabled() {
+       LocationManager locationManager = (LocationManager) requireContext().getSystemService(Context.LOCATION_SERVICE);
+       return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
+               LocationManager.NETWORK_PROVIDER
+       );
+   }
 
 
     @Override
@@ -401,7 +448,7 @@ public class AccidentDetectionActivity extends AppCompatActivity implements Sens
 
 
     public void push(View view) {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
@@ -414,15 +461,7 @@ public class AccidentDetectionActivity extends AppCompatActivity implements Sens
         notificationManagerCompat.notify(1, notification);
     }
 
-    @Override
-    public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START);
-        }else {
-            super.onBackPressed();
-        }
 
-    }
+
+
 }
-
-

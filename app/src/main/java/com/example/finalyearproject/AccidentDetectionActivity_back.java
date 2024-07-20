@@ -58,7 +58,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
 
-public class AccidentDetectionActivity extends AppCompatActivity implements SensorEventListener {
+public class AccidentDetectionActivity_back extends AppCompatActivity implements SensorEventListener {
 
     DrawerLayout drawerLayout;
     NavigationView navigationView;
@@ -85,6 +85,13 @@ public class AccidentDetectionActivity extends AppCompatActivity implements Sens
         Call<Object> postAccidentLocation(@Body LocationPost locationPost);
     }
 
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (actionBarDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,6 +99,49 @@ public class AccidentDetectionActivity extends AppCompatActivity implements Sens
         // getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setContentView(R.layout.activity_accident_detection);
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        drawerLayout = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.nav_view);
+        actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close);
+        drawerLayout.addDrawerListener(actionBarDrawerToggle);
+        actionBarDrawerToggle.syncState();
+
+
+     /*   navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+                switch (item.getItemId()) {
+                    case R.id.nav_home:
+                        Toast.makeText(AccidentDetectionActivity_back.this, "Home", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(AccidentDetectionActivity_back.this, MainActivity.class);
+                        startActivity(intent);
+                        break;
+                    case R.id.maps:
+                        Toast.makeText(AccidentDetectionActivity_back.this, "Maps", Toast.LENGTH_SHORT).show();
+                        Intent intent2 = new Intent(AccidentDetectionActivity_back.this, LoginActivity.class);
+                        startActivity(intent2);
+                        break;
+                    case R.id.profile:
+                        Toast.makeText(AccidentDetectionActivity_back.this, "Profile", Toast.LENGTH_SHORT).show();
+                        Intent intent3 = new Intent(AccidentDetectionActivity_back.this, LoginActivity.class);
+                        startActivity(intent3);
+                        break;
+                    case R.id.accidents:
+                        Toast.makeText(AccidentDetectionActivity_back.this, "Accidents", Toast.LENGTH_SHORT).show();
+                        Intent intent4 = new Intent(AccidentDetectionActivity_back.this, AccidentsListAttendanceActivity.class);
+                        startActivity(intent4);
+                        break;
+                    case R.id.logout:
+                        Toast.makeText(AccidentDetectionActivity_back.this, "Logout", Toast.LENGTH_SHORT).show();
+                        Intent intent5 = new Intent(AccidentDetectionActivity_back.this, LoginActivity.class);
+                        startActivity(intent5);
+                        break;
+                }
+                return false;
+            }
+        });*/
+
 
 
         int REQUEST_CODE = 123;
@@ -138,7 +188,7 @@ public class AccidentDetectionActivity extends AppCompatActivity implements Sens
 
         // Set up button listeners
         goToListButton.setOnClickListener(v -> {
-            Intent intent = new Intent(AccidentDetectionActivity.this, AccidentsListAttendanceActivity.class);
+            Intent intent = new Intent(AccidentDetectionActivity_back.this, AccidentsListAttendanceActivity.class);
             startActivity(intent);
         });
         startDetectionButton.setOnClickListener(v -> startDetection());
@@ -159,7 +209,6 @@ public class AccidentDetectionActivity extends AppCompatActivity implements Sens
     }
 
     private void startDetection() {
-        System.out.println("startDetection");
         if (isDetecting) return;
 
         // Start collecting sensor data
@@ -230,14 +279,14 @@ public class AccidentDetectionActivity extends AppCompatActivity implements Sens
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(channel);
         }
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(AccidentDetectionActivity.this, "accident_detection")
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(AccidentDetectionActivity_back.this, "accident_detection")
                 .setContentTitle("Accident Detection")
                 .setSmallIcon(R.drawable.baseline_notifications_active_24)
                 .setAutoCancel(true)
                 .setContentText("Alert, Accident Might Have Happened !");
 
         notification = builder.build();
-        notificationManagerCompat = NotificationManagerCompat.from(AccidentDetectionActivity.this);
+        notificationManagerCompat = NotificationManagerCompat.from(AccidentDetectionActivity_back.this);
 
         push(v);
         //=================================================================
@@ -386,7 +435,17 @@ public class AccidentDetectionActivity extends AppCompatActivity implements Sens
         );
     }
 
-
+    /*
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PERMISSION_ID) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                getLastLocation();
+            }
+        }
+    }
+*/
     @Override
     public void onResume(){
         super.onResume();
