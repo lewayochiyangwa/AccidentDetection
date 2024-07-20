@@ -40,7 +40,7 @@ public class ToolDrawerItemCustomAdapter extends ArrayAdapter<ToolDataModel> {
         ToolDataModel folder = data[position];
 
 
-        imageViewIcon.setImageResource(R.drawable.ic_launcher_background);
+        imageViewIcon.setImageResource(folder.icon);
         textViewName.setText(folder.name);
 
         return listItem;

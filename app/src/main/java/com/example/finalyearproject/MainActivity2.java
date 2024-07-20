@@ -11,6 +11,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -47,6 +48,9 @@ public class MainActivity2 extends AppCompatActivity {
         drawerItem[0] = new ToolDataModel(R.drawable.accident, "Accident Detection");
         drawerItem[1] = new ToolDataModel(R.drawable.maps, "Maps");
         drawerItem[2] = new ToolDataModel(R.drawable.profile,"Profile");
+
+
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         getSupportActionBar().setHomeButtonEnabled(true);
 
@@ -56,8 +60,10 @@ public class MainActivity2 extends AppCompatActivity {
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mDrawerLayout.setDrawerListener(mDrawerToggle);
         setupDrawerToggle();
+        selectItem(0);
 
     }
+
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
 
@@ -74,17 +80,17 @@ public class MainActivity2 extends AppCompatActivity {
 
         switch (position) {
             case 0:
+                fragment = new DashboardFragment();
+                break;
+            case 1:
                 fragment = new ConnectFragment();
                 break;
-         /*   case 1:
-                fragment = new FixturesFragment();
-                break;
             case 2:
-                fragment = new TableFragment();
-                break;*/
+                fragment = new ConnectFragment();
+                break;
 
             default:
-                break;
+                fragment = new DashboardFragment();
         }
 
         if (fragment != null) {
