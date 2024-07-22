@@ -37,6 +37,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.example.finalyearproject.models.Helpers;
 import com.example.finalyearproject.models.LocationPost;
 import com.example.finalyearproject.models.user;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -63,7 +64,7 @@ public class AccidentDetectionActivity extends AppCompatActivity implements Sens
     DrawerLayout drawerLayout;
     NavigationView navigationView;
     ActionBarDrawerToggle actionBarDrawerToggle;
-    private Button goToListButton,startDetectionButton, stopDetectionButton, stopDetectionButtonBottom, confirmButton, cancelButton;
+    private Button back_detection_button,goToListButton,startDetectionButton, stopDetectionButton, stopDetectionButtonBottom, confirmButton, cancelButton;
     private TextView accelerometerData, decibelData, accidentDetectedMessage, confirmationTimer;
     private LinearLayout sensorDataLayout, accidentAlertLayout, detectionInterface;
     private SensorManager sensorManager;
@@ -115,12 +116,12 @@ public class AccidentDetectionActivity extends AppCompatActivity implements Sens
         cancelButton = findViewById(R.id.cancel_button);
         accelerometerData = findViewById(R.id.accelerometer_data);
         decibelData = findViewById(R.id.decibel_data);
-        accidentDetectedMessage = findViewById(R.id.accident_detected_message);
+       // accidentDetectedMessage = findViewById(R.id.accident_detected_message);
         confirmationTimer = findViewById(R.id.confirmation_timer);
         sensorDataLayout = findViewById(R.id.sensor_data_layout);
         accidentAlertLayout = findViewById(R.id.accident_alert_layout);
         detectionInterface = findViewById(R.id.detection_interface);
-
+        back_detection_button= findViewById(R.id.back_detection_button);
         // Initialize Sensor Manager and Accelerometer
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -141,10 +142,20 @@ public class AccidentDetectionActivity extends AppCompatActivity implements Sens
             Intent intent = new Intent(AccidentDetectionActivity.this, AccidentsListAttendanceActivity.class);
             startActivity(intent);
         });
+        back_detection_button.setOnClickListener(v -> {
+            Intent intent = new Intent(AccidentDetectionActivity.this, MainActivity2.class);
+            startActivity(intent);
+        });
         startDetectionButton.setOnClickListener(v -> startDetection());
         stopDetectionButton.setOnClickListener(v -> stopDetection());
         stopDetectionButtonBottom.setOnClickListener(v -> stopDetection());
-        confirmButton.setOnClickListener(v -> confirmAccident(v));
+        confirmButton.setOnClickListener(v -> {
+            try {
+                confirmAccident(v);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
         cancelButton.setOnClickListener(v -> cancelAccident());
 
         // Request necessary permissions
@@ -221,7 +232,7 @@ public class AccidentDetectionActivity extends AppCompatActivity implements Sens
         }, 120000); // 2 minutes
     }
 
-    private void confirmAccident(View v) {
+    private void confirmAccident(View v) throws Exception {
         accidentAlertLayout.setVisibility(View.GONE);
 
         //======================Firebase Notification====================================
@@ -247,7 +258,7 @@ public class AccidentDetectionActivity extends AppCompatActivity implements Sens
 
         //========================Post Location=====================================
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://f73f-41-79-132-218.ngrok-free.app/")
+                .baseUrl(Helpers.connection())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
         try {
@@ -257,7 +268,6 @@ public class AccidentDetectionActivity extends AppCompatActivity implements Sens
             locationPostBody.setLongitude(longitude);
             locationPostBody.setUser_id("xc");
 
-
             Call<Object> call= service.postAccidentLocation(locationPostBody);
             //  retrofit2.Response response = call.execute();
             Response response = call.execute();
@@ -265,20 +275,16 @@ public class AccidentDetectionActivity extends AppCompatActivity implements Sens
             System.out.println(response.body());
             user u = new Gson().fromJson(response.body().toString(), user.class);
             System.out.println(u.getEmail());
-
         } catch (IOException e) {
             Exception cv = e;
             System.out.println(cv);
-
         } catch (Exception ex) {
             Exception cv = ex;
             System.out.println(cv);
         }
-
         //==============================================================
         Toast.makeText(this, "Emergency services notified", Toast.LENGTH_SHORT).show();
     }
-
     private void cancelAccident() {
         accidentAlertLayout.setVisibility(View.GONE);
     }
@@ -416,11 +422,16 @@ public class AccidentDetectionActivity extends AppCompatActivity implements Sens
 
     @Override
     public void onBackPressed() {
-        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
-            drawerLayout.closeDrawer(GravityCompat.START);
-        }else {
-            super.onBackPressed();
+        try {
+            if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                drawerLayout.closeDrawer(GravityCompat.START);
+            }else {
+                super.onBackPressed();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
         }
+
 
     }
 }

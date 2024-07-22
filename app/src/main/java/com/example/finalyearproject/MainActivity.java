@@ -77,82 +77,23 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-
         StrictMode.setThreadPolicy(policy);
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+     //  setContentView(R.layout.activity_accident_detection);
 
         Button btnSplash = (Button) findViewById(R.id.btnSplash);
         btnSplash.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), NonRegisteredActivity.class);
-                startActivity(intent);
-            }
-        });
-//activity_splash
-      /*  Button ambuBtn = (Button) findViewById(R.id.btnSplash);
-        ambuBtn.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), AmbulanceLoginActivity.class);
-                startActivity(intent);
-            }
-        });*/
-/*
-        Button btn = (Button) findViewById(R.id.loginButton);
-        btn.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-
-
-                Retrofit retrofit = new Retrofit.Builder()
-                        .baseUrl("https://eb43-2c0f-f8f0-d348-0-3c63-96ae-d540-162.ngrok-free.app/")
-                        .addConverterFactory(GsonConverterFactory.create())
-                        .build();
-                UserService service = retrofit.create(UserService.class);
-                UserRequest userRequest = new UserRequest();
-                EditText emailEditText = findViewById(R.id.emailEditText);
-                String email = emailEditText.getText().toString();
-                EditText passwordEditText = findViewById(R.id.passwordEditText);
-                String pass = passwordEditText.getText().toString();
-                userRequest.setEmail(email);
-                userRequest.setPassword(pass);
-                try {
-                    Call<Object>call= service.createUser(userRequest);
-                    Response response = call.execute();
-                    System.out.println(response.body());
-                    user u = new Gson().fromJson(response.body().toString(), user.class);
-                    System.out.println(u.getEmail());
-
-                } catch (IOException e) {
-                    Exception cv = e;
-                    System.out.println(cv);
-
-                } catch (Exception ex) {
-                    Exception cv = ex;
-                   System.out.println(cv);
-                }
-                Intent intent = new Intent(MainActivity.this, AccidentDetectionActivity.class);
-                startActivity(intent);
-                // Intent intent = new Intent(MainActivity.this, AccidentsListAttendanceActivity.class);
-                // Intent intent = new Intent(MainActivity.this, LocationActivity.class);
-            }
-        });
-
-        Button btnPolice = (Button) findViewById(R.id.policeButton);
-        btnPolice.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), PoliceLoginActivity.class);
+              //  Intent intent = new Intent(getApplicationContext(), AccidentDetectionActivity.class);
                 startActivity(intent);
             }
         });
 
-        Button ambuBtn = (Button) findViewById(R.id.ambulanceButton);
-        ambuBtn.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), AmbulanceLoginActivity.class);
-                startActivity(intent);
-            }
-        });
-*/
+
+
 
 
     }

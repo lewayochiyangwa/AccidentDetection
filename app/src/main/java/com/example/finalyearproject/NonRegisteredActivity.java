@@ -2,6 +2,7 @@ package com.example.finalyearproject;
 
 import static android.content.ContentValues.TAG;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -20,6 +21,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -30,11 +32,13 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.finalyearproject.databinding.ActivityMainBinding;
 import com.example.finalyearproject.models.AccidentReporter;
+import com.example.finalyearproject.models.Helpers;
 import com.example.finalyearproject.models.UserRequest;
 import com.example.finalyearproject.models.user;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 
@@ -49,8 +53,12 @@ public class NonRegisteredActivity extends AppCompatActivity {
 
     Button btnReport;
     BottomSheetDialog dialog;
-    private ImageView mPhotoImageView;
 
+    Button closeButton;
+    AlertDialog.Builder builder;
+    private ImageView mPhotoImageView;
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
+    private byte[] imageByteStream;
     interface AccidentReporterService {
         @POST("/api/accidents")
         Call<Object> createUser(@Body AccidentReporter userRequest);
@@ -76,7 +84,7 @@ public class NonRegisteredActivity extends AppCompatActivity {
         btnCallAmbulance.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent callIntent = new Intent(Intent.ACTION_CALL);
-                callIntent.setData(Uri.parse("tel:+263783065525"));
+                callIntent.setData(Uri.parse("tel:+23054722810"));
 
              /*   if (ActivityCompat.checkSelfPermission(NonRegisteredActivity.this,
                         android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
@@ -98,7 +106,7 @@ public class NonRegisteredActivity extends AppCompatActivity {
         btnCallPolice.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent callIntent = new Intent(Intent.ACTION_CALL);
-                callIntent.setData(Uri.parse("tel:+263783065525"));
+                callIntent.setData(Uri.parse("tel:+23054722810"));
 
                 if (ActivityCompat.checkSelfPermission(NonRegisteredActivity.this,
                         android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
@@ -120,7 +128,43 @@ public class NonRegisteredActivity extends AppCompatActivity {
             }
         });
 
+        //========================Dialog Starts Here================================
+        /*closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                closeButton = (Button) findViewById(R.id.button);
+                builder = new AlertDialog.Builder(this);
 
+                //Uncomment the below code to Set the message and title from the strings.xml file
+                builder.setMessage(R.string.dialog_message) .setTitle(R.string.dialog_title);
+
+                //Setting message manually and performing action on button click
+                builder.setMessage("Do you want to close this application ?")
+                        .setCancelable(false)
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                finish();
+                                Toast.makeText(getApplicationContext(),"you choose yes action for alertbox",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                //  Action for 'NO' Button
+                                dialog.cancel();
+                                Toast.makeText(getApplicationContext(),"you choose no action for alertbox",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                //Creating dialog box
+                AlertDialog alert = builder.create();
+                //Setting the title manually
+                alert.setTitle("AlertDialogExample");
+                alert.show();
+            }
+        });*/
+
+        //========================Dialog Ends Here================================
 
 
         dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
@@ -138,27 +182,52 @@ public class NonRegisteredActivity extends AppCompatActivity {
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int name = Integer.parseInt(nameField.getText().toString());
+                int name = 3;//Integer.parseInt(nameField.getText().toString());
                 String phone = phoneField.getText().toString();
                 String message = messageField.getText().toString();
 
-                Retrofit retrofit = new Retrofit.Builder()
-                        .baseUrl("https://eb43-2c0f-f8f0-d348-0-3c63-96ae-d540-162.ngrok-free.app/")
-                        .addConverterFactory(GsonConverterFactory.create())
-                        .build();
+                Retrofit retrofit = null;
+                try {
+                    retrofit = new Retrofit.Builder()
+                            .baseUrl(Helpers.connection())
+                            .addConverterFactory(GsonConverterFactory.create())
+                            .build();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
                 NonRegisteredActivity.AccidentReporterService service = retrofit.create(NonRegisteredActivity.AccidentReporterService.class);
                 AccidentReporter userRequest = new AccidentReporter();
+
+
                 userRequest.setReporter_id(name);
                 userRequest.setLocation(phone);
                 userRequest.setSeverity(message);
                 userRequest.setPhoto("photo");
 
+
+
+
                 try {
-                    Call<Object> call= service.createUser(userRequest);
-                    Response response = call.execute();
-                    System.out.println(response.body());
-                    user u = new Gson().fromJson(response.body().toString(), user.class);
-                    System.out.println(u.getEmail());
+
+                    if(phone.isEmpty()){
+                        AlertDialog alertDialog = new AlertDialog.Builder(NonRegisteredActivity.this).create();
+                        alertDialog.setTitle("Alert");
+                        alertDialog.setMessage("Can Not Post Without Phone Number");
+                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                });
+                        alertDialog.show();
+                    }else{
+                        Call<Object> call= service.createUser(userRequest);
+                        Response response = call.execute();
+                        System.out.println(response.body());
+                        user u = new Gson().fromJson(response.body().toString(), user.class);
+                        System.out.println(u.getEmail());
+                    }
+
 
                 } catch (IOException e) {
                     Exception cv = e;
@@ -196,7 +265,7 @@ public class NonRegisteredActivity extends AppCompatActivity {
                 imageFile);
     }
 //======================================
-private static final int REQUEST_IMAGE_CAPTURE = 1;
+
     private static final int REQUEST_CAMERA_PERMISSION = 123;
 
     private static final int REQUEST_CALL_PERMISSION = 133;
@@ -205,7 +274,7 @@ private static final int REQUEST_IMAGE_CAPTURE = 1;
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_IMAGE_CAPTURE) {
+      /*  if (requestCode == REQUEST_IMAGE_CAPTURE) {
 
             switch (resultCode) {
                 case RESULT_OK:
@@ -221,8 +290,24 @@ private static final int REQUEST_IMAGE_CAPTURE = 1;
             }
         }
 
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            // Get the captured image data
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+
+            // Convert the Bitmap to a byte array
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+            imageByteStream = stream.toByteArray();
+
+            // Do something with the byte stream, such as upload it to a server
+            // ...
+        }*/
+
     }
 
     //======================================
+
+
 
 }

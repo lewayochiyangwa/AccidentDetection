@@ -21,7 +21,7 @@ import androidx.fragment.app.FragmentManager;
 
 import com.example.finalyearproject.adapters.ToolDrawerItemCustomAdapter;
 import com.example.finalyearproject.models.ToolDataModel;
-
+import android.content.Intent;
 public class MainActivity2 extends AppCompatActivity {
 
     private String[] mNavigationDrawerItemTitles;
@@ -31,11 +31,19 @@ public class MainActivity2 extends AppCompatActivity {
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
     ActionBarDrawerToggle mDrawerToggle;
-
+    String username;
+    String id;
+    String role;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
+
+        Intent intent = getIntent();
+         username = intent.getStringExtra("username");
+         id = intent.getStringExtra("id");
+         role = intent.getStringExtra("role");
+
         mTitle = mDrawerTitle = getTitle();
         mNavigationDrawerItemTitles= getResources().getStringArray(R.array.navigation_drawer_items_array);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -43,11 +51,12 @@ public class MainActivity2 extends AppCompatActivity {
 
         setupToolbar();
 
-        ToolDataModel[] drawerItem = new ToolDataModel[3];
+        ToolDataModel[] drawerItem = new ToolDataModel[4];
 
-        drawerItem[0] = new ToolDataModel(R.drawable.accident, "Accident Detection");
-        drawerItem[1] = new ToolDataModel(R.drawable.maps, "Maps");
-        drawerItem[2] = new ToolDataModel(R.drawable.profile,"Profile");
+        drawerItem[0] = new ToolDataModel(R.drawable.home, "Dashboard");
+        drawerItem[1] = new ToolDataModel(R.drawable.accident, "Accident Detection");
+        drawerItem[2] = new ToolDataModel(R.drawable.maps, "Maps");
+        drawerItem[3] = new ToolDataModel(R.drawable.profile,"Profile");
 
 
 
@@ -77,16 +86,21 @@ public class MainActivity2 extends AppCompatActivity {
     private void selectItem(int position) {
 
         Fragment fragment = null;
-
+        Bundle args = new Bundle();
         switch (position) {
             case 0:
                 fragment = new DashboardFragment();
+                args.putString("username", username);
+                args.putString("id", id);
+                args.putString("role", role);
+                fragment.setArguments(args);
                 break;
             case 1:
                 fragment = new ConnectFragment();
                 break;
             case 2:
-                fragment = new ConnectFragment();
+                fragment = new MapsFragment();
+                System.out.println("Tapinda mu Maps");
                 break;
 
             default:

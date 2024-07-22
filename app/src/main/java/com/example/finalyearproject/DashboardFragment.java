@@ -9,9 +9,11 @@ import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
+import android.os.StrictMode;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -29,7 +31,8 @@ public class DashboardFragment extends Fragment {
     private String mParam1;
     private String mParam2;
     private CardView contributeCard;
-
+    private CardView logoutCard;
+    private CardView mapsCard;
     private CardView accidentDetectCard;
     public DashboardFragment() {
         // Required empty public constructor
@@ -54,6 +57,7 @@ public class DashboardFragment extends Fragment {
         }
     }
 
+
  /*   @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -61,13 +65,19 @@ public class DashboardFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_dashboard, container, false);
     }
     */
+
  @Override
  public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+     StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+     StrictMode.setThreadPolicy(policy);
+
      View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
 
      // Find the CardView
      contributeCard = view.findViewById(R.id.contributeCard);
      accidentDetectCard = view.findViewById(R.id.accidentDetectCard);
+     logoutCard = view.findViewById(R.id.logoutCard);
+     mapsCard = view.findViewById(R.id.mapsCard);
 
      // Set the OnClickListener
      contributeCard.setOnClickListener(new View.OnClickListener() {
@@ -85,6 +95,19 @@ public class DashboardFragment extends Fragment {
          }
      });
 
+
+     mapsCard.setOnClickListener(new View.OnClickListener() {
+         @Override
+         public void onClick(View v) {
+             System.out.println("Accident card clicked");
+
+             Intent intent = new Intent(getContext(), MapsActivity.class);
+
+             // Start the Activity
+             startActivity(intent);
+         }
+     });
+
      accidentDetectCard.setOnClickListener(new View.OnClickListener() {
          @Override
          public void onClick(View v) {
@@ -97,6 +120,28 @@ public class DashboardFragment extends Fragment {
          }
      });
 
+     logoutCard.setOnClickListener(new View.OnClickListener() {
+         @Override
+         public void onClick(View v) {
+             Intent intent = new Intent(requireContext(), LoginActivity.class);
+             startActivity(intent);
+         }
+     });
+
+     if (getArguments() != null) {
+         String username = getArguments().getString("username");
+         int id = getArguments().getInt("id");
+         String role = getArguments().getString("role");
+
+         TextView usernameTextView = view.findViewById(R.id.textView2);
+         usernameTextView.setText(username);
+
+         TextView roleTextView = view.findViewById(R.id.roleTextView);
+         roleTextView.setText(role);
+
+
+         // Use the values as needed
+     }
      return view;
  }
 

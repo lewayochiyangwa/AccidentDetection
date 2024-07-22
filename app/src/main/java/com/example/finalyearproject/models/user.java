@@ -7,29 +7,7 @@ public class user {
     public int id;
     public String email;
     public String emergency_contact;
-    @Override
-    public String toString() {
-        return "user{" +
-                "id=" + id +
-                ", email='" + email + '\'' +
-                ", emergency_contact='" + emergency_contact + '\'' +
-                '}';
-    }
-
-
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        user user = (user) o;
-        return id == user.id && Objects.equals(email, user.email) && Objects.equals(emergency_contact, user.emergency_contact);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, email, emergency_contact);
-    }
+    public String role;
 
     public int getId() {
         return id;
@@ -55,10 +33,18 @@ public class user {
         this.emergency_contact = emergency_contact;
     }
 
-    public user(int id, String email, String emergency_contact) {
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public user(int id, String email, String emergency_contact, String role) {
         this.id = id;
         this.email = email;
         this.emergency_contact = emergency_contact;
+        this.role = role;
     }
-
 }
