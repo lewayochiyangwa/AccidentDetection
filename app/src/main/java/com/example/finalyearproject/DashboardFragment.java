@@ -154,7 +154,7 @@ public class DashboardFragment extends Fragment {
      logoutCard.setOnClickListener(new View.OnClickListener() {
          @Override
          public void onClick(View v) {
-             Intent intent = new Intent(requireContext(), AccidentsListAttendanceActivity.class);
+             Intent intent = new Intent(requireContext(), LoginActivity.class);
              startActivity(intent);
          }
      });

@@ -14,39 +14,117 @@
     android:layout_gravity="bottom"
     android:layout_marginTop="200dp">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginBottom="20dp"
+            android:textStyle="bold"
+            android:textSize="23dp"
+            android:textColor="@color/colorPrimary"
+            android:textAlignment="center"
+            android:text="Fill in the form below to Report an Accident">
+        </TextView>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:textStyle="bold"
+            android:text="Enter Your Name*">
+        </TextView>
+        <EditText
+            android:id="@+id/name"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@drawable/edit_text_border"
+            android:padding="8dp"
+            android:layout_margin="8dp"
+            android:hint="Enter your name" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="10dp"
+            android:textStyle="bold"
+            android:text="Enter Phone Number*">
+        </TextView>
+
+        <EditText
+            android:id="@+id/phone"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@drawable/edit_text_border"
+            android:padding="8dp"
+            android:layout_margin="8dp"
+            android:inputType="phone"
+            android:hint="Enter your phone" />
+    </LinearLayout>
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:textStyle="bold"
+        android:text="Judgement the severity of the acciddent">
+    </TextView>
+
+
     <Spinner
         android:id="@+id/severity_spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="19dp"
         android:layout_marginTop="16dp" />
-    <EditText
-        android:id="@+id/name"
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:background="@drawable/edit_text_border"
-        android:padding="8dp"
-        android:layout_margin="8dp"
-        android:hint="Enter your name" />
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        >
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="10dp"
+            android:textStyle="bold"
+            android:text="Enter Message"/>
 
-    <EditText
-        android:id="@+id/phone"
+        <EditText
+            android:id="@+id/message"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@drawable/edit_text_border"
+            android:padding="8dp"
+            android:layout_margin="8dp"
+            android:layout_marginTop="8dp"
+            android:hint="Enter message" />
+
+    </LinearLayout>
+
+
+    <TextView
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:background="@drawable/edit_text_border"
-        android:padding="8dp"
-        android:layout_margin="8dp"
-        android:hint="Enter your phone" />
-
-    <EditText
-        android:id="@+id/message"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:background="@drawable/edit_text_border"
-        android:padding="8dp"
-        android:layout_margin="8dp"
-        android:hint="Enter message" />
-
-
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp"
+        android:textStyle="bold"
+        android:text=" Want to take picture of the Scene?">
+    </TextView>
 
     <ImageView
         android:id="@+id/mPhotoImageView"
@@ -58,12 +136,14 @@
         android:id="@+id/btnTakePicture"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:text="Take Picture" />
 
     <Button
         android:id="@+id/submit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:text="Submit"
         android:onClick="submit" />
 

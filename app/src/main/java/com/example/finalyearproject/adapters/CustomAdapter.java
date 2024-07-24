@@ -103,7 +103,7 @@ public class CustomAdapter extends BaseAdapter {
 
               view = inflter.inflate(R.layout.card, null);
         TextView country = (TextView) view.findViewById(R.id.name);
-        country.setText(accidentsLists2.get(i).getUser_id());
+        country.setText(accidentsLists2.get(i).getContactnumber());
 
         Button attend = view.findViewById(R.id.attend);
         attend.setOnClickListener(new View.OnClickListener() {

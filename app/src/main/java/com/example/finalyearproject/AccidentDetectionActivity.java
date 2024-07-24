@@ -115,7 +115,7 @@ public class AccidentDetectionActivity extends AppCompatActivity implements Sens
         confirmButton = findViewById(R.id.confirm_button);
         cancelButton = findViewById(R.id.cancel_button);
         accelerometerData = findViewById(R.id.accelerometer_data);
-        decibelData = findViewById(R.id.decibel_data);
+      //  decibelData = findViewById(R.id.decibel_data);
        // accidentDetectedMessage = findViewById(R.id.accident_detected_message);
         confirmationTimer = findViewById(R.id.confirmation_timer);
         sensorDataLayout = findViewById(R.id.sensor_data_layout);
@@ -200,6 +200,8 @@ public class AccidentDetectionActivity extends AppCompatActivity implements Sens
         stopDetectionButton.setVisibility(View.GONE);
     }
 
+    //==============================ACCIDENT SENSOR STARTS HERE===============================================================
+    /*
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
@@ -215,6 +217,68 @@ public class AccidentDetectionActivity extends AppCompatActivity implements Sens
             }
         }
     }
+    */
+    private static final int MOVING_AVG_WINDOW_SIZE = 5; // Adjust this value to control the smoothing
+    private float[] movingAvgX = new float[MOVING_AVG_WINDOW_SIZE];
+    private float[] movingAvgY = new float[MOVING_AVG_WINDOW_SIZE];
+    private float[] movingAvgZ = new float[MOVING_AVG_WINDOW_SIZE];
+    private int movingAvgIndex = 0;
+    private boolean isAccidentDetected = false;
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            float x = event.values[0];
+            float y = event.values[1];
+            float z = event.values[2];
+
+            // Update moving average
+            movingAvgX[movingAvgIndex] = x;
+            movingAvgY[movingAvgIndex] = y;
+            movingAvgZ[movingAvgIndex] = z;
+            movingAvgIndex = (movingAvgIndex + 1) % MOVING_AVG_WINDOW_SIZE;
+
+            // Calculate the moving average
+            float avgX = calculateMovingAverage(movingAvgX);
+            float avgY = calculateMovingAverage(movingAvgY);
+            float avgZ = calculateMovingAverage(movingAvgZ);
+
+            accelerometerData.setText(getString(R.string.accelerometer_data, avgX, avgY, avgZ));
+
+            // Check for accident conditions using the moving average values
+            if (isAccidentDetected(avgX, avgY, avgZ)) {
+                if (!isAccidentDetected) {
+
+                    //=================Stop Detecting after accident detect=============================
+                    // Stop collecting sensor data
+                    sensorManager.unregisterListener(this);
+                    mediaRecorder.stop();
+
+                    isDetecting = false;
+                    sensorDataLayout.setVisibility(View.GONE);
+                    stopDetectionButton.setVisibility(View.GONE);
+
+                    //=================================================
+
+                    isAccidentDetected = true;
+                    showAccidentAlert();
+                }
+            } else {
+                isAccidentDetected = false;
+            }
+        }
+    }
+    private float calculateMovingAverage(float[] values) {
+        float sum = 0f;
+        for (float value : values) {
+            sum += value;
+        }
+        return sum / MOVING_AVG_WINDOW_SIZE;
+    }
+    private boolean isAccidentDetected(float x, float y, float z) {
+        // Adjust the thresholds based on your specific requirements
+        return Math.abs(x) > 20 || Math.abs(y) > 20 || Math.abs(z) > 20;
+    }
+    //========================ACCIDENT SENSOR ENDS HERE===============================================
 
 
     @Override
@@ -233,6 +297,9 @@ public class AccidentDetectionActivity extends AppCompatActivity implements Sens
     }
 
     private void confirmAccident(View v) throws Exception {
+
+
+
         accidentAlertLayout.setVisibility(View.GONE);
 
         //======================Firebase Notification====================================

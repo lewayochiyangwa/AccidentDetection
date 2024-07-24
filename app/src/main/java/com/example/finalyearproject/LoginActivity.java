@@ -76,10 +76,10 @@ public class LoginActivity extends AppCompatActivity {
                 String email = emailEditText.getText().toString();
                 EditText passwordEditText = findViewById(R.id.passwordEditText);
                 String pass = passwordEditText.getText().toString();
-            //    userRequest.setEmail(email);
-             //   userRequest.setPassword(pass);
-                userRequest.setEmail("Annotida");
-                userRequest.setPassword("Annotida");
+                userRequest.setEmail(email);
+                userRequest.setPassword(pass);
+              //  userRequest.setEmail("Annotida");
+             //   userRequest.setPassword("Annotida");
 
 
                 try {

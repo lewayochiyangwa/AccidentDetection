@@ -35,7 +35,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private ActivityMapsBinding binding;
 
     public interface AccidentLocationGetterService {
-        @GET("/api/accidents2")
+        @GET("/api/accidents3")
         Call<Object> getAccidentLocation();
     }
      List<AccidentsLocationList> accidentsLocationList;

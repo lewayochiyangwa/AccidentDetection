@@ -3,4 +3,6 @@
     <color name="colorPrimaryDark">#6A1818</color>
     <color name="colorAccent">#FFFFFF</color>
     <!-- Add more colors as needed -->
+    <!-- colors.xml -->
+    <color name="blue">#0000FF</color>
 </resources>

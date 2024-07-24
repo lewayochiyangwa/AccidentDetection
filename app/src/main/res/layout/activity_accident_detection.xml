@@ -236,6 +236,7 @@
                 android:layout_marginTop="56dp"
                 android:backgroundTint="@color/colorPrimaryDark"
                 android:text="Accidents List"
+                android:visibility="gone"
                 android:textColor="@android:color/white" />
             <Button
                 android:id="@+id/stop_detection_button_bottom"

@@ -46,6 +46,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -218,40 +220,74 @@ public class NonRegisteredActivity extends AppCompatActivity  implements Adapter
                 String phone = phoneField.getText().toString();
                 String message = messageField.getText().toString();
 
-                Retrofit retrofit = null;
-                try {
-                    retrofit = new Retrofit.Builder()
-                            .baseUrl(Helpers.connection())
-                            .addConverterFactory(GsonConverterFactory.create())
-                            .build();
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-                NonRegisteredActivity.AccidentReporterService service = retrofit.create(NonRegisteredActivity.AccidentReporterService.class);
-             //   AccidentReporter userRequest = new AccidentReporter();
-                AccReported userRequest = new AccReported();
-                LocalDateTime nowToday = null;
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
-                    nowToday = LocalDateTime.now();
-                }
-                String b = severitySpinner.getSelectedItem().toString();
+                    if(validatePhoneNumber(phone)){
 
-                userRequest.setName(name);
-                userRequest.setPhone(phone);
-                userRequest.setMessage(message);
-                userRequest.setReport_time(nowToday.toString());
-                userRequest.setSeverity(severitySpinner.getSelectedItem().toString());
-             //   userRequest.setPhoto("photo");
+                        Retrofit retrofit = null;
+                        try {
+                            retrofit = new Retrofit.Builder()
+                                    .baseUrl(Helpers.connection())
+                                    .addConverterFactory(GsonConverterFactory.create())
+                                    .build();
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                        NonRegisteredActivity.AccidentReporterService service = retrofit.create(NonRegisteredActivity.AccidentReporterService.class);
+                        //   AccidentReporter userRequest = new AccidentReporter();
+                        AccReported userRequest = new AccReported();
+                        LocalDateTime nowToday = null;
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                            nowToday = LocalDateTime.now();
+                        }
+                        String b = severitySpinner.getSelectedItem().toString();
+
+                        userRequest.setName(name);
+                        userRequest.setPhone(phone);
+                        userRequest.setMessage(message);
+                        userRequest.setReport_time(nowToday.toString());
+                        userRequest.setSeverity(severitySpinner.getSelectedItem().toString());
+                        //   userRequest.setPhoto("photo");
 
 
 
 
-                try {
+                        try {
 
-                    if(phone.isEmpty()){
+                            if(phone.isEmpty()){
+                                AlertDialog alertDialog = new AlertDialog.Builder(NonRegisteredActivity.this).create();
+                                alertDialog.setTitle("Alert");
+                                alertDialog.setMessage("Can Not Post Without Phone Number");
+                                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                                        new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.dismiss();
+                                            }
+                                        });
+                                alertDialog.show();
+                            }else{
+                                Call<Object> call= service.createUser(userRequest);
+                                Response response = call.execute();
+                                System.out.println(response.body());
+                                user u = new Gson().fromJson(response.body().toString(), user.class);
+                                System.out.println(u.getEmail());
+                            }
+
+
+                        } catch (IOException e) {
+                            Exception cv = e;
+                            System.out.println(cv);
+
+                        } catch (Exception ex) {
+                            Exception cv = ex;
+                            System.out.println(cv);
+                        }
+
+
+                    }else{
+                        AlertDialog alertDialog3 = new AlertDialog.Builder(NonRegisteredActivity.this).create();
+                        alertDialog3.dismiss();
                         AlertDialog alertDialog = new AlertDialog.Builder(NonRegisteredActivity.this).create();
                         alertDialog.setTitle("Alert");
-                        alertDialog.setMessage("Can Not Post Without Phone Number");
+                        alertDialog.setMessage("Phone Number Not Valid \n eg +263783065525");
                         alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
@@ -259,27 +295,11 @@ public class NonRegisteredActivity extends AppCompatActivity  implements Adapter
                                     }
                                 });
                         alertDialog.show();
-                    }else{
-                        Call<Object> call= service.createUser(userRequest);
-                        Response response = call.execute();
-                        System.out.println(response.body());
-                        user u = new Gson().fromJson(response.body().toString(), user.class);
-                        System.out.println(u.getEmail());
                     }
 
 
-                } catch (IOException e) {
-                    Exception cv = e;
-                    System.out.println(cv);
-
-                } catch (Exception ex) {
-                    Exception cv = ex;
-                    System.out.println(cv);
-                }
-
-
                 dialog.dismiss();
-                Toast.makeText(NonRegisteredActivity.this, "Thank you for reporting", Toast.LENGTH_SHORT).show();
+              //  Toast.makeText(NonRegisteredActivity.this, "Thank you for reporting", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -347,6 +367,10 @@ public class NonRegisteredActivity extends AppCompatActivity  implements Adapter
 
     //======================================
 
-
+    public static boolean validatePhoneNumber(String phoneNumber) {
+        Pattern pattern = Pattern.compile("^(\\+263|0)7[7-8|1|3][0-9]{7}$");
+        Matcher matcher = pattern.matcher(phoneNumber);
+        return matcher.matches();
+    }
 
 }
