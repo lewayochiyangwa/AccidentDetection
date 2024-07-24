@@ -83,39 +83,63 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
                 signUpUser(fullName, email, password, phone);
 
                 if(validatePhoneNumber(phone)){
-                    Retrofit retrofit = null;
-                    try {
-                        retrofit = new Retrofit.Builder()
-                                .baseUrl(Helpers.connection())
-                                .addConverterFactory(GsonConverterFactory.create())
-                                .build();
-                    } catch (Exception e) {
-                        throw new RuntimeException(e);
-                    }
-                    SignUpActivity.UserRegisterService service = retrofit.create(SignUpActivity.UserRegisterService.class);
-                    UserRegister userRequest = new UserRegister();
-                    userRequest.setName(fullName);
-                    userRequest.setEmail(email);
-                    userRequest.setPassword(password);
-                    userRequest.setPhone(phone);
-                    userRequest.setRole(severitySpinner.getSelectedItem().toString());
 
-                    Call<Object>call= service.createUser(userRequest);
-                    Response response = null;
-                    try {
-                        response = call.execute();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
+                    if(isValidEmailAddress(email)){
+                        Retrofit retrofit = null;
+                        try {
+                            retrofit = new Retrofit.Builder()
+                                    .baseUrl(Helpers.connection())
+                                    .addConverterFactory(GsonConverterFactory.create())
+                                    .build();
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                        SignUpActivity.UserRegisterService service = retrofit.create(SignUpActivity.UserRegisterService.class);
+                        UserRegister userRequest = new UserRegister();
+                        userRequest.setName(fullName);
+                        userRequest.setEmail(email);
+                        userRequest.setPassword(password);
+                        userRequest.setPhone(phone);
+                        userRequest.setRole(severitySpinner.getSelectedItem().toString());
+
+                        Call<Object>call= service.createUser(userRequest);
+                        Response response = null;
+                        try {
+                            response = call.execute();
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
 
 
-                    System.out.println(response.body());
-                    if(response.isSuccessful()){
+                        System.out.println(response.body());
+                        if(response.isSuccessful()){
+                            AlertDialog alertDialog3 = new AlertDialog.Builder(SignUpActivity.this).create();
+                            alertDialog3.dismiss();
+                            AlertDialog alertDialog = new AlertDialog.Builder(SignUpActivity.this).create();
+                            alertDialog.setTitle("Alert");
+                            alertDialog.setMessage("Registration Successful");
+                            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                        }
+                                    });
+                            alertDialog.show();
+                            try {
+                                Thread.sleep(4000);
+                            } catch (InterruptedException e) {
+                                throw new RuntimeException(e);
+                            }
+                            Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
+                            startActivity(intent);
+                            finish();
+                        }
+                    }else{
                         AlertDialog alertDialog3 = new AlertDialog.Builder(SignUpActivity.this).create();
                         alertDialog3.dismiss();
                         AlertDialog alertDialog = new AlertDialog.Builder(SignUpActivity.this).create();
                         alertDialog.setTitle("Alert");
-                        alertDialog.setMessage("Registration Successful");
+                        alertDialog.setMessage("Email Not Valid \n eg myname@gmail.com");
                         alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
@@ -123,15 +147,8 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
                                     }
                                 });
                         alertDialog.show();
-                        try {
-                            Thread.sleep(4000);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
-                        Intent intent = new Intent(SignUpActivity.this, LoginActivity.class);
-                        startActivity(intent);
-                        finish();
                     }
+
                 }else{
                     AlertDialog alertDialog3 = new AlertDialog.Builder(SignUpActivity.this).create();
                     alertDialog3.dismiss();
@@ -180,6 +197,13 @@ public class SignUpActivity extends AppCompatActivity implements AdapterView.OnI
         Pattern pattern = Pattern.compile("^(\\+263|0)7[7-8|1|3][0-9]{7}$");
         Matcher matcher = pattern.matcher(phoneNumber);
         return matcher.matches();
+    }
+
+    public boolean isValidEmailAddress(String email) {
+        String ePattern = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$";
+        java.util.regex.Pattern p = java.util.regex.Pattern.compile(ePattern);
+        java.util.regex.Matcher m = p.matcher(email);
+        return m.matches();
     }
     private void signUpUser(String fullName, String email, String password, String phone) {
     /*    ApiService apiService = RetrofitClient.getInstance().getApi();
