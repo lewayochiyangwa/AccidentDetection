@@ -86,8 +86,8 @@ public class MainActivity extends AppCompatActivity {
         Button btnSplash = (Button) findViewById(R.id.btnSplash);
         btnSplash.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), NonRegisteredActivity.class);
-              //  Intent intent = new Intent(getApplicationContext(), AccidentDetectionActivity.class);
+               // Intent intent = new Intent(getApplicationContext(), NonRegisteredActivity.class);
+                Intent intent = new Intent(getApplicationContext(), SignUpActivity.class);
                 startActivity(intent);
             }
         });

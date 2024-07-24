@@ -80,7 +80,7 @@
             android:textColor="#FFFFFF"
             android:layout_marginBottom="16dp"/>
 
-        <Button
+    <!--    <Button
             android:id="@+id/policeButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -96,7 +96,7 @@
             android:layout_marginBottom="16dp"
             android:backgroundTint="#6A1818"
             android:text="Ambulance Login"
-            android:textColor="#FFFFFF" />
+            android:textColor="#FFFFFF" /> -->
 
         <TextView
             android:layout_width="match_parent"

@@ -1,12 +1,18 @@
 package com.example.finalyearproject;
 
+import static android.app.PendingIntent.getActivity;
+
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -70,8 +76,8 @@ public class LoginActivity extends AppCompatActivity {
                 String email = emailEditText.getText().toString();
                 EditText passwordEditText = findViewById(R.id.passwordEditText);
                 String pass = passwordEditText.getText().toString();
-              //  userRequest.setEmail(email);
-              //  userRequest.setPassword(pass);
+            //    userRequest.setEmail(email);
+             //   userRequest.setPassword(pass);
                 userRequest.setEmail("Annotida");
                 userRequest.setPassword("Annotida");
 
@@ -107,6 +113,16 @@ public class LoginActivity extends AppCompatActivity {
                         intent.putExtra("username", u.getEmail());
                         intent.putExtra("id", u.getId());
                         intent.putExtra("role", u.getRole());
+
+                     //   SharedPreferences sharedPref = LoginActivity.this.getPreferences(Context.MODE_PRIVATE);
+                        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
+                        SharedPreferences.Editor editor = sharedPref.edit();
+                        editor.putString("username", u.getEmail());
+                        editor.putInt("id", u.getId());
+                        editor.putString("role", u.getRole());
+                        editor.apply();
+
+
                         startActivity(intent);
                     }else{
                         alertDialog3.dismiss();
@@ -136,6 +152,15 @@ public class LoginActivity extends AppCompatActivity {
 
                 // Intent intent = new Intent(MainActivity.this, AccidentsListAttendanceActivity.class);
                 // Intent intent = new Intent(MainActivity.this, LocationActivity.class);
+            }
+        });
+
+        TextView signupTextView = findViewById(R.id.signupTextView);
+        signupTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LoginActivity.this, SignUpActivity.class);
+                startActivity(intent);
             }
         });
 

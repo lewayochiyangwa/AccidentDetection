@@ -12,9 +12,12 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -31,6 +34,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.finalyearproject.databinding.ActivityMainBinding;
+import com.example.finalyearproject.models.AccReported;
 import com.example.finalyearproject.models.AccidentReporter;
 import com.example.finalyearproject.models.Helpers;
 import com.example.finalyearproject.models.UserRequest;
@@ -41,6 +45,7 @@ import com.google.gson.Gson;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -49,7 +54,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
 
-public class NonRegisteredActivity extends AppCompatActivity {
+public class NonRegisteredActivity extends AppCompatActivity  implements AdapterView.OnItemSelectedListener{
 
     Button btnReport;
     BottomSheetDialog dialog;
@@ -59,9 +64,21 @@ public class NonRegisteredActivity extends AppCompatActivity {
     private ImageView mPhotoImageView;
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private byte[] imageByteStream;
+    String[] courses = { "Severe", "Moderate",
+            "Minor" };
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+       // Toast.makeText(getApplicationContext(), courses[i], Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
+
+    }
+
     interface AccidentReporterService {
-        @POST("/api/accidents")
-        Call<Object> createUser(@Body AccidentReporter userRequest);
+        @POST("/api/reported")
+        Call<Object> createUser(@Body AccReported userRequest);
     }
 
     @Override
@@ -173,7 +190,22 @@ public class NonRegisteredActivity extends AppCompatActivity {
     private void createDialog() {
         View view = getLayoutInflater().inflate(R.layout.bottom_dialog, null);
 
-        Button submit = view.findViewById(R.id.submit);
+        //=====================Spinner Content==============================================
+        Spinner severitySpinner = view.findViewById(R.id.severity_spinner);
+        // Set up the Spinner with the options
+        severitySpinner.setOnItemSelectedListener(this);
+        ArrayAdapter ad
+                = new ArrayAdapter(
+                this,
+                android.R.layout.simple_spinner_item,
+                courses);
+        ad.setDropDownViewResource(
+                android.R.layout
+                        .simple_spinner_dropdown_item);
+        severitySpinner.setAdapter(ad);
+
+        //======================Spinner Ends Here===============================================
+        Button submit =  view.findViewById(R.id.submit);
         EditText nameField = view.findViewById(R.id.name);
         EditText phoneField = view.findViewById(R.id.phone);
         EditText messageField = view.findViewById(R.id.message);
@@ -182,7 +214,7 @@ public class NonRegisteredActivity extends AppCompatActivity {
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int name = 3;//Integer.parseInt(nameField.getText().toString());
+                String name =nameField.getText().toString();
                 String phone = phoneField.getText().toString();
                 String message = messageField.getText().toString();
 
@@ -196,13 +228,20 @@ public class NonRegisteredActivity extends AppCompatActivity {
                     throw new RuntimeException(e);
                 }
                 NonRegisteredActivity.AccidentReporterService service = retrofit.create(NonRegisteredActivity.AccidentReporterService.class);
-                AccidentReporter userRequest = new AccidentReporter();
+             //   AccidentReporter userRequest = new AccidentReporter();
+                AccReported userRequest = new AccReported();
+                LocalDateTime nowToday = null;
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                    nowToday = LocalDateTime.now();
+                }
+                String b = severitySpinner.getSelectedItem().toString();
 
-
-                userRequest.setReporter_id(name);
-                userRequest.setLocation(phone);
-                userRequest.setSeverity(message);
-                userRequest.setPhoto("photo");
+                userRequest.setName(name);
+                userRequest.setPhone(phone);
+                userRequest.setMessage(message);
+                userRequest.setReport_time(nowToday.toString());
+                userRequest.setSeverity(severitySpinner.getSelectedItem().toString());
+             //   userRequest.setPhoto("photo");
 
 
 

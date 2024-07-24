@@ -1,15 +1,20 @@
 package com.example.finalyearproject;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
 import android.os.StrictMode;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -71,6 +76,10 @@ public class DashboardFragment extends Fragment {
      StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
      StrictMode.setThreadPolicy(policy);
 
+
+
+
+
      View view = inflater.inflate(R.layout.fragment_dashboard, container, false);
 
      // Find the CardView
@@ -101,10 +110,32 @@ public class DashboardFragment extends Fragment {
          public void onClick(View v) {
              System.out.println("Accident card clicked");
 
-             Intent intent = new Intent(getContext(), MapsActivity.class);
+             if (getArguments() != null) {
+                 String username = getArguments().getString("username");
+                 int id = getArguments().getInt("id");
+                 String role = getArguments().getString("role");
 
-             // Start the Activity
-             startActivity(intent);
+                 if(role.toLowerCase().equals("admin") ||
+                         role.toLowerCase().equals("police") || role.toLowerCase().equals("ambulance")) {
+                     Intent intent = new Intent(getContext(), MapsActivity.class);
+                     startActivity(intent);
+
+                 }else{
+                     AlertDialog alertDialog3 = new AlertDialog.Builder(requireContext()).create();
+                     alertDialog3.dismiss();
+                     AlertDialog alertDialog = new AlertDialog.Builder(requireContext()).create();
+                     alertDialog.setTitle("Alert");
+                     alertDialog.setMessage("No Roles To View The MAp");
+                     alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                             new DialogInterface.OnClickListener() {
+                                 public void onClick(DialogInterface dialog, int which) {
+                                     dialog.dismiss();
+                                 }
+                             });
+                     alertDialog.show();
+                 }
+             }
+
          }
      });
 
@@ -123,12 +154,22 @@ public class DashboardFragment extends Fragment {
      logoutCard.setOnClickListener(new View.OnClickListener() {
          @Override
          public void onClick(View v) {
-             Intent intent = new Intent(requireContext(), LoginActivity.class);
+             Intent intent = new Intent(requireContext(), AccidentsListAttendanceActivity.class);
              startActivity(intent);
          }
      });
 
-     if (getArguments() != null) {
+     SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(requireContext());
+     String usernamew = sharedPref.getString("username", "");
+     int idw = sharedPref.getInt("id", -1);
+     String rolew = sharedPref.getString("role", "");
+
+     TextView usernameTextView = view.findViewById(R.id.textView2);
+     usernameTextView.setText(usernamew);
+
+     TextView roleTextView = view.findViewById(R.id.roleTextView);
+     roleTextView.setText(rolew);
+   /*  if (getArguments() != null) {
          String username = getArguments().getString("username");
          int id = getArguments().getInt("id");
          String role = getArguments().getString("role");
@@ -141,7 +182,7 @@ public class DashboardFragment extends Fragment {
 
 
          // Use the values as needed
-     }
+     }*/
      return view;
  }
 

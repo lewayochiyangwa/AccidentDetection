@@ -38,7 +38,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         @GET("/api/accidents2")
         Call<Object> getAccidentLocation();
     }
-    List<AccidentsLocationList> accidentsLocationList;
+     List<AccidentsLocationList> accidentsLocationList;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,7 +58,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             throw new RuntimeException(e);
         }
         try {
-            AccidentsListAttendanceActivity.AccidentLocationGetterService service = retrofit.create(AccidentsListAttendanceActivity.AccidentLocationGetterService.class);
+            MapsActivity.AccidentLocationGetterService service = retrofit.create(MapsActivity.AccidentLocationGetterService.class);
             Call<Object> call = service.getAccidentLocation();
             Response response = call.execute();
             String v ="";

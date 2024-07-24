@@ -4,11 +4,13 @@ import java.util.Objects;
 
 public class AccidentsLocationList {
 
+    public AccidentsLocationList(){}
 
     public int id;
     public String user_id;
 
     public String longitude;
+    public String latitude;
 
     public int getId() {
         return id;
@@ -19,12 +21,12 @@ public class AccidentsLocationList {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AccidentsLocationList that = (AccidentsLocationList) o;
-        return id == that.id && Objects.equals(user_id, that.user_id) && Objects.equals(latitude, that.latitude) && Objects.equals(longitude, that.longitude);
+        return id == that.id && Objects.equals(user_id, that.user_id) && Objects.equals(longitude, that.longitude) && Objects.equals(latitude, that.latitude) && Objects.equals(completed, that.completed) && Objects.equals(attended, that.attended);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, user_id, latitude, longitude);
+        return Objects.hash(id, user_id, longitude, latitude, completed, attended);
     }
 
     public void setId(int id) {
@@ -39,14 +41,6 @@ public class AccidentsLocationList {
         this.user_id = user_id;
     }
 
-    public String getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(String latitude) {
-        this.latitude = latitude;
-    }
-
     public String getLongitude() {
         return longitude;
     }
@@ -55,14 +49,41 @@ public class AccidentsLocationList {
         this.longitude = longitude;
     }
 
-    public String latitude;
+    public String getLatitude() {
+        return latitude;
+    }
 
-    public AccidentsLocationList(int id, String user_id, String latitude, String longitude) {
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
+
+    public String getCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(String completed) {
+        this.completed = completed;
+    }
+
+    public String getAttended() {
+        return attended;
+    }
+
+    public void setAttended(String attended) {
+        this.attended = attended;
+    }
+
+    public AccidentsLocationList(int id, String user_id, String longitude, String latitude, String completed, String attended) {
         this.id = id;
         this.user_id = user_id;
-        this.latitude = latitude;
         this.longitude = longitude;
+        this.latitude = latitude;
+        this.completed = completed;
+        this.attended = attended;
     }
+
+    public String completed;
+    public String attended;
 
 
 }

@@ -17,8 +17,10 @@ import androidx.appcompat.app.AlertDialog;
 import com.example.finalyearproject.LoginActivity;
 import com.example.finalyearproject.R;
 import com.example.finalyearproject.models.AccidentsLocationList;
+import com.example.finalyearproject.models.AccidentsLocationList2;
 import com.example.finalyearproject.models.Helpers;
 import com.example.finalyearproject.models.PostId;
+import com.example.finalyearproject.models.SmsMessage;
 import com.example.finalyearproject.models.UserRequest;
 import com.example.finalyearproject.models.user;
 import com.google.gson.Gson;
@@ -41,7 +43,7 @@ public class CustomAdapter extends BaseAdapter {
     int flags[];
     LayoutInflater inflter;
     List<AccidentsList> accidentsLists;
-    List<AccidentsLocationList> accidentsLists2;
+    List<AccidentsLocationList2> accidentsLists2;
     public CustomAdapter(){
 
     }
@@ -67,7 +69,15 @@ public class CustomAdapter extends BaseAdapter {
         Call<Object> accidentsAttend(@Body PostId userRequest);
 
     }
-    public CustomAdapter(Context applicationContext, List<AccidentsLocationList> accidentsLists2) {
+
+    public interface AccidentsSmsService {
+
+        @POST("/api/sms")
+        Call<Object> accidentsSms(@Body SmsMessage userRequest);
+
+    }
+
+    public CustomAdapter(Context applicationContext, List<AccidentsLocationList2> accidentsLists2) {
         this.context = context;
         this.accidentsLists2 = accidentsLists2;
         inflter = (LayoutInflater.from(applicationContext));
@@ -113,6 +123,7 @@ public class CustomAdapter extends BaseAdapter {
                 CustomAdapter.AccidentsAttendService service = retrofit.create(CustomAdapter.AccidentsAttendService.class);
                 PostId postId = new PostId();
                 postId.setId(accidentsLists2.get(i).getId());
+                String to = accidentsLists2.get(i).getContactnumber();
 
 
                 try {
@@ -125,6 +136,28 @@ public class CustomAdapter extends BaseAdapter {
                         va.returnVal = 1;
                         if (onDeletedListener != null) {
                             onDeletedListener.onDeleted(i);
+
+                            //====================SuccessFull On Attend=====================================
+
+                            Retrofit retrofit3 = null;
+                            try {
+                                retrofit3 = new Retrofit.Builder()
+                                        .baseUrl(Helpers.connection())
+                                        .addConverterFactory(GsonConverterFactory.create())
+                                        .build();
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
+                            CustomAdapter.AccidentsSmsService service3 = retrofit3.create(CustomAdapter.AccidentsSmsService.class);
+                            SmsMessage smsMessage = new SmsMessage();
+                            smsMessage.setFrom(Helpers.validTwilioNumber());
+                            smsMessage.setBody("Accident has been attended");
+                            smsMessage.setTo(to);
+
+                            Call <Object> call3= service3.accidentsSms(smsMessage);
+                            Response response3 = call3.execute();
+                            System.out.println(response3.body());
+                            //=========================================================
                         }
                     }
                     if(u.value == 0) {
