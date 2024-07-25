@@ -1,16 +1,52 @@
 package com.example.finalyearproject;
 
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.finalyearproject.models.Helpers;
+import com.example.finalyearproject.models.ProfileUpdate;
+import com.example.finalyearproject.models.UserRequest;
+import com.example.finalyearproject.models.user;
+import com.google.gson.Gson;
+
+import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import retrofit2.Call;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.Body;
+import retrofit2.http.POST;
 
 //import com.example.myapp.utils.DatabaseHelper;
 
 public class ProfileActivity extends AppCompatActivity {
-/*
+
+
+    public interface UserService {
+        @POST("/api/profile_update")
+        Call<Object> createUser(@Body ProfileUpdate userRequest);
+
+
+    }
     private static final int REQUEST_CONTACT_PERMISSION = 1001;
     private static final int REQUEST_SELECT_CONTACT = 1002;
     private static final int REQUEST_SELECT_PROFILE_IMAGE = 1003;
 
-    private DatabaseHelper databaseHelper;
+
     private TextView tvFullName, tvEmail, tvAllergies, tvMedicalInsurance, tvEmergencyContact;
     private EditText etFullName, etEmail, etAllergies, etMedicalInsurance;
     private Button btnSaveChanges, btnSelectContact;
@@ -18,223 +54,169 @@ public class ProfileActivity extends AppCompatActivity {
 
     private String userId = "1"; // Assuming userId is 1 for this example, change it as needed.
 
+    public boolean isValidEmailAddress(String email) {
+        String ePattern = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$";
+        java.util.regex.Pattern p = java.util.regex.Pattern.compile(ePattern);
+        java.util.regex.Matcher m = p.matcher(email);
+        return m.matches();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        databaseHelper = new DatabaseHelper(this);
-
-        initViews();
-        loadUserData();
-        setupListeners();
-    }
-
-    private void initViews() {
-        tvFullName = findViewById(R.id.tv_full_name_label);
-        tvEmail = findViewById(R.id.tv_email_label);
-        tvAllergies = findViewById(R.id.tv_allergies_label);
-        tvMedicalInsurance = findViewById(R.id.tv_medical_insurance_label);
-        tvEmergencyContact = findViewById(R.id.tv_emergency_contact_label);
-
-        etFullName = findViewById(R.id.et_full_name);
-        etEmail = findViewById(R.id.et_email);
-        etAllergies = findViewById(R.id.et_allergies);
-        etMedicalInsurance = findViewById(R.id.et_medical_insurance);
-
-        btnSaveChanges = findViewById(R.id.btn_save);
-        btnSelectContact = findViewById(R.id.btn_select_contact);
-
-        iconEditProfileImage = findViewById(R.id.icon_edit_profile_image);
-        iconEditFullName = findViewById(R.id.icon_edit_full_name);
-        iconEditEmail = findViewById(R.id.icon_edit_email);
-        iconEditAllergies = findViewById(R.id.icon_edit_allergies);
-        iconEditMedicalInsurance = findViewById(R.id.icon_edit_medical_insurance);
 
 
-        ivProfileImage = findViewById(R.id.iv_profile_image);
-    }
 
-    private void loadUserData() {
-        SQLiteDatabase db = databaseHelper.getReadableDatabase();
-        Cursor cursor = db.query(DatabaseHelper.TABLE_USERS, null, DatabaseHelper.KEY_ID + "=?", new String[]{userId}, null, null, null);
 
-        if (cursor != null && cursor.moveToFirst()) {
-            int fullNameIndex = cursor.getColumnIndex(DatabaseHelper.KEY_FULL_NAME);
-            int emailIndex = cursor.getColumnIndex(DatabaseHelper.KEY_EMAIL);
-            int allergiesIndex = cursor.getColumnIndex(DatabaseHelper.KEY_ALLERGIES);
-            int insuranceInfoIndex = cursor.getColumnIndex(DatabaseHelper.KEY_INSURANCE_INFO);
-            int emergencyContactIndex = cursor.getColumnIndex(DatabaseHelper.KEY_EMERGENCY_CONTACT);
-            int profileImageIndex = cursor.getColumnIndex(DatabaseHelper.KEY_PROFILE_IMAGE);
+        Button btn = (Button) findViewById(R.id.submit);
+        btn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
 
-            if (fullNameIndex >= 0) tvFullName.setText(cursor.getString(fullNameIndex));
-            if (emailIndex >= 0) tvEmail.setText(cursor.getString(emailIndex));
-            if (allergiesIndex >= 0) tvAllergies.setText(cursor.getString(allergiesIndex));
-            if (insuranceInfoIndex >= 0) tvMedicalInsurance.setText(cursor.getString(insuranceInfoIndex));
-            if (emergencyContactIndex >= 0) tvEmergencyContact.setText(cursor.getString(emergencyContactIndex));
-            if (profileImageIndex >= 0) {
-                String profileImageUri = cursor.getString(profileImageIndex);
-                if (profileImageUri != null) {
-                    ivProfileImage.setImageURI(Uri.parse(profileImageUri));
+                EditText nameEditText = findViewById(R.id.name);
+                String name = nameEditText.getText().toString();
+
+                EditText emailEditText = findViewById(R.id.email);
+                String email = emailEditText.getText().toString();
+
+                EditText allegyEditText = findViewById(R.id.allegy);
+                String allegy = emailEditText.getText().toString();
+
+                EditText phoneEditText = findViewById(R.id.contacts);
+                String phone = phoneEditText.getText().toString();
+
+                EditText medicEditText = findViewById(R.id.medic);
+                String medic = medicEditText.getText().toString();
+
+
+                if(isValidEmailAddress(email)){
+
+            if(validatePhoneNumber(phone)){
+                Retrofit retrofit = null;
+                try {
+                    retrofit = new Retrofit.Builder()
+                            .baseUrl(Helpers.connection())
+                            .addConverterFactory(GsonConverterFactory.create())
+                            .build();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
                 }
-            }
+                ProfileActivity.UserService service = retrofit.create(ProfileActivity.UserService.class);
+                ProfileUpdate userRequest = new ProfileUpdate();
 
-            cursor.close();
-        }
-    }
+                SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(ProfileActivity.this);
+                // String usernamew = sharedPref.getString("username", "");
+                int idw = sharedPref.getInt("id", -1);
 
-    private void setupListeners() {
-        iconEditProfileImage.setOnClickListener(view -> {
-            selectProfileImage();
-        });
+                //  userRequest.setEmail(email);
+                //  userRequest.setPassword(pass);
+                userRequest.setName(name);
+                userRequest.setAllergies(allegy);
+                userRequest.setMedical_insurance(medic);
+                userRequest.setEmergency_contact(phone);
+                userRequest.setId(idw);
 
-        iconEditFullName.setOnClickListener(view -> {
-            toggleEditField(tvFullName, etFullName);
-        });
 
-        iconEditEmail.setOnClickListener(view -> {
-            toggleEditField(tvEmail, etEmail);
-        });
 
-        iconEditAllergies.setOnClickListener(view -> {
-            toggleEditField(tvAllergies, etAllergies);
-        });
+                try {
+                    AlertDialog alertDialog3 = new AlertDialog.Builder(ProfileActivity.this).create();
+                     /*   alertDialog3.setTitle("Alert");
+                        alertDialog3.setMessage("Loading...");
+                        alertDialog3.show();*/
+                    Call<Object> call= service.createUser(userRequest);
+                    System.out.println(userRequest);
+                    Response response = call.execute();
+                    System.out.println(response.body());
 
-        iconEditMedicalInsurance.setOnClickListener(view -> {
-            toggleEditField(tvMedicalInsurance, etMedicalInsurance);
-        });
+                    if(response.body()==null){
+                        alertDialog3.dismiss();
+                        AlertDialog alertDialog = new AlertDialog.Builder(ProfileActivity.this).create();
+                        alertDialog.setTitle("Alert");
+                        alertDialog.setMessage("Something Went Wrong");
+                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                });
+                        alertDialog.show();
+                    }else{
 
-        iconEditEmergencyContact.setOnClickListener(view -> {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_CONTACTS}, REQUEST_CONTACT_PERMISSION);
-            } else {
-                selectContact();
-            }
-        });
-
-        btnSelectContact.setOnClickListener(view -> selectContact());
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            btnSaveChanges.setOnClickListener(view -> saveChanges());
-        }
-    }
-
-    private void toggleEditField(TextView textView, EditText editText) {
-        if (editText.getVisibility() == View.GONE) {
-            editText.setText(textView.getText());
-            editText.setVisibility(View.VISIBLE);
-            textView.setVisibility(View.GONE);
-        } else {
-            editText.setVisibility(View.GONE);
-            textView.setVisibility(View.VISIBLE);
-        }
-    }
-
-    private void selectProfileImage() {
-        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(intent, REQUEST_SELECT_PROFILE_IMAGE);
-    }
-
-    private void selectContact() {
-        Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
-        startActivityForResult(intent, REQUEST_SELECT_CONTACT);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == REQUEST_SELECT_CONTACT && resultCode == RESULT_OK && data != null) {
-            Uri contactUri = data.getData();
-            if (contactUri != null) {
-                retrieveContactInfo(contactUri);
-            }
-        } else if (requestCode == REQUEST_SELECT_PROFILE_IMAGE && resultCode == RESULT_OK && data != null) {
-            Uri selectedImageUri = data.getData();
-            if (selectedImageUri != null) {
-                ivProfileImage.setImageURI(selectedImageUri);
-                saveProfileImage(selectedImageUri.toString());
-            }
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_CONTACT_PERMISSION) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                selectContact();
-            } else {
-                Toast.makeText(this, "Permission denied to access contacts", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
-    @SuppressLint("Range")
-    private void retrieveContactInfo(Uri contactUri) {
-        Cursor cursor = getContentResolver().query(contactUri, null, null, null, null);
-        if (cursor != null && cursor.moveToFirst()) {
-            int idIndex = cursor.getColumnIndex(ContactsContract.Contacts._ID);
-            int nameIndex = cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME);
-
-            if (idIndex >= 0 && nameIndex >= 0) {
-                String id = cursor.getString(idIndex);
-                String name = cursor.getString(nameIndex);
-
-                if (cursor.getInt(cursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER)) > 0) {
-                    Cursor phoneCursor = getContentResolver().query(
-                            ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
-                            null,
-                            ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
-                            new String[]{id}, null);
-
-                    if (phoneCursor != null && phoneCursor.moveToFirst()) {
-                        int phoneNumberIndex = phoneCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
-                        if (phoneNumberIndex >= 0) {
-                            String phoneNumber = phoneCursor.getString(phoneNumberIndex);
-                            tvEmergencyContact.setText(name + " : " + phoneNumber);
-                        }
-                        phoneCursor.close();
+                        alertDialog3.dismiss();
+                        AlertDialog alertDialog = new AlertDialog.Builder(ProfileActivity.this).create();
+                        alertDialog.setTitle("Alert");
+                        alertDialog.setMessage("Profile Updated Successfully");
+                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                });
+                        alertDialog.show();
                     }
+                    //  user u = new Gson().fromJson(response.body().toString(), user.class);
+                    //   System.out.println(u.getEmail());
+                    //    int idval = u.getId();
+
+                } catch (IOException e) {
+                    Exception cv = e;
+                    System.out.println(cv);
+
+                } catch (Exception ex) {
+                    Exception cv = ex;
+                    System.out.println(cv);
                 }
+            }else{
+                AlertDialog alertDialog3 = new AlertDialog.Builder(ProfileActivity.this).create();
+                alertDialog3.dismiss();
+                AlertDialog alertDialog = new AlertDialog.Builder(ProfileActivity.this).create();
+                alertDialog.setTitle("Alert");
+                alertDialog.setMessage("Phone Number Not Valid");
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                alertDialog.show();
+
             }
-            cursor.close();
-        }
+
+                    // Intent intent = new Intent(MainActivity.this, AccidentsListAttendanceActivity.class);
+                    // Intent intent = new Intent(MainActivity.this, LocationActivity.class);
+                }else{
+                    AlertDialog alertDialog3 = new AlertDialog.Builder(ProfileActivity.this).create();
+                    alertDialog3.dismiss();
+                    AlertDialog alertDialog = new AlertDialog.Builder(ProfileActivity.this).create();
+                    alertDialog.setTitle("Alert");
+                    alertDialog.setMessage("Email Not Valid");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+
+                }
+
+
+            }
+        });
+
     }
 
-    private void saveProfileImage(String imageUri) {
-        SQLiteDatabase db = databaseHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(DatabaseHelper.KEY_PROFILE_IMAGE, imageUri);
-        db.update(DatabaseHelper.TABLE_USERS, values, DatabaseHelper.KEY_ID + "=?", new String[]{userId});
-        Toast.makeText(this, "Profile image updated successfully", Toast.LENGTH_SHORT).show();
+
+
+    public static boolean validatePhoneNumber(String phoneNumber) {
+        Pattern pattern = Pattern.compile("^(\\+263|0)7[7-8|1|3][0-9]{7}$");
+        Matcher matcher = pattern.matcher(phoneNumber);
+        return matcher.matches();
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.R)
-    private void saveChanges() {
-        SQLiteDatabase db = databaseHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
 
-        if (etFullName.getVisibility() == View.VISIBLE) {
-            values.put(DatabaseHelper.KEY_FULL_NAME, etFullName.getText().toString());
-        }
-        if (etEmail.getVisibility() == View.VISIBLE) {
-            values.put(DatabaseHelper.KEY_EMAIL, etEmail.getText().toString());
-        }
-        if (etAllergies.getVisibility() == View.VISIBLE) {
-            values.put(DatabaseHelper.KEY_ALLERGIES, etAllergies.getText().toString());
-        }
-        if (etMedicalInsurance.getVisibility() == View.VISIBLE) {
-            values.put(DatabaseHelper.KEY_INSURANCE_INFO, etMedicalInsurance.getText().toString());
-        }
-        if (!values.isEmpty()) {
-            db.update(DatabaseHelper.TABLE_USERS, values, DatabaseHelper.KEY_ID + "=?", new String[]{userId});
-            Toast.makeText(this, "Profile updated successfully", Toast.LENGTH_SHORT).show();
-            loadUserData();
-        } else {
-            Toast.makeText(this, "No changes to save", Toast.LENGTH_SHORT).show();
-        }
-    }
 
- */
+
+
 }

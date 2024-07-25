@@ -45,6 +45,12 @@ public class LoginActivity extends AppCompatActivity {
     private Button policeButton;
     private Button ambulanceButton;
 
+    public boolean isValidEmailAddress(String email) {
+        String ePattern = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$";
+        java.util.regex.Pattern p = java.util.regex.Pattern.compile(ePattern);
+        java.util.regex.Matcher m = p.matcher(email);
+        return m.matches();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,102 +62,129 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
 
+        TextView forgotPasswordTextView = findViewById(R.id.forgotPasswordTextView);
+        forgotPasswordTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LoginActivity.this, ResetPasswordActivity.class);
+                startActivity(intent);
+            }
+        });
+
         Button btn = (Button) findViewById(R.id.loginButton);
         btn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-
-
-                Retrofit retrofit = null;
-                try {
-                    retrofit = new Retrofit.Builder()
-                            .baseUrl(Helpers.connection())
-                            .addConverterFactory(GsonConverterFactory.create())
-                            .build();
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-                UserService service = retrofit.create(UserService.class);
-                UserRequest userRequest = new UserRequest();
                 EditText emailEditText = findViewById(R.id.emailEditText);
                 String email = emailEditText.getText().toString();
                 EditText passwordEditText = findViewById(R.id.passwordEditText);
                 String pass = passwordEditText.getText().toString();
-                userRequest.setEmail(email);
-                userRequest.setPassword(pass);
-              //  userRequest.setEmail("Annotida");
-             //   userRequest.setPassword("Annotida");
+                if(!isValidEmailAddress(email)){
+
+                    Retrofit retrofit = null;
+                    try {
+                        retrofit = new Retrofit.Builder()
+                                .baseUrl(Helpers.connection())
+                                .addConverterFactory(GsonConverterFactory.create())
+                                .build();
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                    UserService service = retrofit.create(UserService.class);
+                    UserRequest userRequest = new UserRequest();
+
+                      userRequest.setEmail(email);
+                      userRequest.setPassword(pass);
+                  //  userRequest.setEmail("Annotida");
+                   // userRequest.setPassword("Annotida");
 
 
-                try {
+                    try {
+                        AlertDialog alertDialog3 = new AlertDialog.Builder(LoginActivity.this).create();
+                      /*  alertDialog3.setTitle("Alert");
+                        alertDialog3.setMessage("Loading...");
+                        alertDialog3.show();*/
+                        Call<Object>call= service.createUser(userRequest);
+                        Response response = call.execute();
+                        System.out.println(response.body());
+
+                        if(response.body()==null){
+                            alertDialog3.dismiss();
+                            AlertDialog alertDialog = new AlertDialog.Builder(LoginActivity.this).create();
+                            alertDialog.setTitle("Alert");
+                            alertDialog.setMessage("Username Or Password Wrong");
+                            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                        }
+                                    });
+                            alertDialog.show();
+                        }
+                        user u = new Gson().fromJson(response.body().toString(), user.class);
+                        System.out.println(u.getEmail());
+                        int idval = u.getId();
+                        if(idval!=0){
+                            alertDialog3.dismiss();
+                            Intent intent = new Intent(LoginActivity.this, MainActivity2.class);
+                            intent.putExtra("username", u.getEmail());
+                            intent.putExtra("id", u.getId());
+                            intent.putExtra("role", u.getRole());
+
+                            //   SharedPreferences sharedPref = LoginActivity.this.getPreferences(Context.MODE_PRIVATE);
+                            SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
+                            SharedPreferences.Editor editor = sharedPref.edit();
+                            editor.putString("username", u.getEmail());
+                            editor.putInt("id", u.getId());
+                            editor.putString("role", u.getRole());
+                            editor.apply();
+
+
+                            startActivity(intent);
+                        }else{
+                            alertDialog3.dismiss();
+                            AlertDialog alertDialog = new AlertDialog.Builder(LoginActivity.this).create();
+                            alertDialog.setTitle("Alert");
+                            alertDialog.setMessage("Username Or Password Wrong");
+                            alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.dismiss();
+                                        }
+                                    });
+                            alertDialog.show();
+                        }
+
+
+
+
+                    } catch (IOException e) {
+                        Exception cv = e;
+                        System.out.println(cv);
+
+                    } catch (Exception ex) {
+                        Exception cv = ex;
+                        System.out.println(cv);
+                    }
+
+                    // Intent intent = new Intent(MainActivity.this, AccidentsListAttendanceActivity.class);
+                    // Intent intent = new Intent(MainActivity.this, LocationActivity.class);
+                }else{
                     AlertDialog alertDialog3 = new AlertDialog.Builder(LoginActivity.this).create();
-                    alertDialog3.setTitle("Alert");
-                    alertDialog3.setMessage("Loading...");
-                    alertDialog3.show();
-                    Call<Object>call= service.createUser(userRequest);
-                    Response response = call.execute();
-                    System.out.println(response.body());
+                    alertDialog3.dismiss();
+                    AlertDialog alertDialog = new AlertDialog.Builder(LoginActivity.this).create();
+                    alertDialog.setTitle("Alert");
+                    alertDialog.setMessage("Email Not Valid");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
 
-                    if(response.body()==null){
-                        alertDialog3.dismiss();
-                        AlertDialog alertDialog = new AlertDialog.Builder(LoginActivity.this).create();
-                        alertDialog.setTitle("Alert");
-                        alertDialog.setMessage("Username Or Password Wrong");
-                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                    }
-                                });
-                        alertDialog.show();
-                    }
-                    user u = new Gson().fromJson(response.body().toString(), user.class);
-                    System.out.println(u.getEmail());
-                    int idval = u.getId();
-                    if(idval!=0){
-                        alertDialog3.dismiss();
-                        Intent intent = new Intent(LoginActivity.this, MainActivity2.class);
-                        intent.putExtra("username", u.getEmail());
-                        intent.putExtra("id", u.getId());
-                        intent.putExtra("role", u.getRole());
-
-                     //   SharedPreferences sharedPref = LoginActivity.this.getPreferences(Context.MODE_PRIVATE);
-                        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
-                        SharedPreferences.Editor editor = sharedPref.edit();
-                        editor.putString("username", u.getEmail());
-                        editor.putInt("id", u.getId());
-                        editor.putString("role", u.getRole());
-                        editor.apply();
-
-
-                        startActivity(intent);
-                    }else{
-                        alertDialog3.dismiss();
-                        AlertDialog alertDialog = new AlertDialog.Builder(LoginActivity.this).create();
-                        alertDialog.setTitle("Alert");
-                        alertDialog.setMessage("Username Or Password Wrong");
-                        alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                    }
-                                });
-                        alertDialog.show();
-                    }
-
-
-
-
-                } catch (IOException e) {
-                    Exception cv = e;
-                    System.out.println(cv);
-
-                } catch (Exception ex) {
-                    Exception cv = ex;
-                    System.out.println(cv);
                 }
 
-                // Intent intent = new Intent(MainActivity.this, AccidentsListAttendanceActivity.class);
-                // Intent intent = new Intent(MainActivity.this, LocationActivity.class);
+
             }
         });
 

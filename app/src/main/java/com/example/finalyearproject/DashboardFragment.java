@@ -20,6 +20,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.android.material.button.MaterialButton;
+
 /**
  * A simple {@link Fragment} subclass.
  * Use the {@link DashboardFragment#newInstance} factory method to
@@ -39,6 +41,7 @@ public class DashboardFragment extends Fragment {
     private CardView logoutCard;
     private CardView mapsCard;
     private CardView accidentDetectCard;
+    private CardView helpCard;
     public DashboardFragment() {
         // Required empty public constructor
     }
@@ -87,6 +90,24 @@ public class DashboardFragment extends Fragment {
      accidentDetectCard = view.findViewById(R.id.accidentDetectCard);
      logoutCard = view.findViewById(R.id.logoutCard);
      mapsCard = view.findViewById(R.id.mapsCard);
+     helpCard = view.findViewById(R.id.helpCard);
+
+     MaterialButton editProfileButton = view.findViewById(R.id.editProfileB);
+     editProfileButton.setOnClickListener(new View.OnClickListener() {
+         @Override
+         public void onClick(View v) {
+             Intent intent = new Intent(requireContext(), ProfileActivity.class);
+             startActivity(intent);
+         }
+     });
+     helpCard.setOnClickListener(new View.OnClickListener() {
+         @Override
+         public void onClick(View v) {
+             Intent intent = new Intent(requireContext(), RegisteredReportAccidentActivity.class);
+             startActivity(intent);
+         }
+     });
+
 
      // Set the OnClickListener
      contributeCard.setOnClickListener(new View.OnClickListener() {
@@ -154,7 +175,7 @@ public class DashboardFragment extends Fragment {
      logoutCard.setOnClickListener(new View.OnClickListener() {
          @Override
          public void onClick(View v) {
-             Intent intent = new Intent(requireContext(), LoginActivity.class);
+             Intent intent = new Intent(requireContext(), NonRegisteredActivity.class);
              startActivity(intent);
          }
      });

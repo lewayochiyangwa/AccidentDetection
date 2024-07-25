@@ -5,11 +5,7 @@
 
     android:orientation="vertical">
 
-    <Button
-        android:id="@+id/back"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Back" />
+
 
     <ListView
         android:id="@+id/simpleListView"
@@ -19,5 +15,9 @@
         android:divider="@null"
         android:dividerHeight="0dp"
         android:footerDividersEnabled="false" />
-
+    <Button
+        android:id="@+id/back"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Back" />
 </LinearLayout>

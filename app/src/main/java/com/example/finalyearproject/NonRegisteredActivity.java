@@ -269,6 +269,19 @@ public class NonRegisteredActivity extends AppCompatActivity  implements Adapter
                                 System.out.println(response.body());
                                 user u = new Gson().fromJson(response.body().toString(), user.class);
                                 System.out.println(u.getEmail());
+
+                                AlertDialog alertDialog3 = new AlertDialog.Builder(NonRegisteredActivity.this).create();
+                                alertDialog3.dismiss();
+                                AlertDialog alertDialog = new AlertDialog.Builder(NonRegisteredActivity.this).create();
+                                alertDialog.setTitle("Alert");
+                                alertDialog.setMessage("Report Submitted Successfully");
+                                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                                        new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.dismiss();
+                                            }
+                                        });
+                                alertDialog.show();
                             }
 
 

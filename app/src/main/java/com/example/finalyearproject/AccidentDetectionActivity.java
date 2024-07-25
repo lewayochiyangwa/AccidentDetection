@@ -6,6 +6,7 @@ import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
@@ -23,12 +24,14 @@ import android.provider.Settings;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
@@ -137,6 +140,16 @@ public class AccidentDetectionActivity extends AppCompatActivity implements Sens
         // Handler for timers
         handler = new Handler();
 
+      //  ImageView backButton = findViewById(R.id.back_button);
+       /* backButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(AccidentDetectionActivity.this, MainActivity2.class);
+                startActivity(intent);
+               // Toast.makeText(YourActivity.this, "Love clicked!", Toast.LENGTH_SHORT).show();
+            }
+        });*/
+
         // Set up button listeners
         goToListButton.setOnClickListener(v -> {
             Intent intent = new Intent(AccidentDetectionActivity.this, AccidentsListAttendanceActivity.class);
@@ -201,8 +214,8 @@ public class AccidentDetectionActivity extends AppCompatActivity implements Sens
     }
 
     //==============================ACCIDENT SENSOR STARTS HERE===============================================================
-    /*
-    @Override
+
+  /*  @Override
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             float x = event.values[0];
@@ -213,11 +226,94 @@ public class AccidentDetectionActivity extends AppCompatActivity implements Sens
 
             // Check for accident conditions (example logic)
             if (Math.abs(x) > 15 || Math.abs(y) > 15 || Math.abs(z) > 15) {
-                showAccidentAlert();
+              //  showAccidentAlert();
+
+                AlertDialog alertDialog3 = new AlertDialog.Builder(AccidentDetectionActivity.this).create();
+                alertDialog3.dismiss();
+                AlertDialog alertDialog = new AlertDialog.Builder(AccidentDetectionActivity.this).create();
+                alertDialog.setTitle("Alert");
+                alertDialog.setMessage("Accident Detected");
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Confirm",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+
+
+                                //==============================================
+                                // Stop collecting sensor data
+                                sensorManager.unregisterListener(AccidentDetectionActivity.this);
+                                mediaRecorder.stop();
+
+                                isDetecting = false;
+                                sensorDataLayout.setVisibility(View.GONE);
+                                stopDetectionButton.setVisibility(View.GONE);
+
+
+                                //================================================
+
+
+                                //======================Firebase Notification====================================
+                                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+                                    NotificationChannel channel = new NotificationChannel("accident_detection", "accident_detection", NotificationManager.IMPORTANCE_DEFAULT);
+                                    NotificationManager manager = getSystemService(NotificationManager.class);
+                                    manager.createNotificationChannel(channel);
+                                }
+                                NotificationCompat.Builder builder = new NotificationCompat.Builder(AccidentDetectionActivity.this, "accident_detection")
+                                        .setContentTitle("Accident Detection")
+                                        .setSmallIcon(R.drawable.baseline_notifications_active_24)
+                                        .setAutoCancel(true)
+                                        .setContentText("Alert, Accident Might Have Happened !");
+
+                                notification = builder.build();
+                                notificationManagerCompat = NotificationManagerCompat.from(AccidentDetectionActivity.this);
+
+                                push();
+                                //=================================================================
+
+                                getLastLocation();
+                                // Notify emergency services
+
+                                //========================Post Location=====================================
+                                Retrofit retrofit = null;
+                                try {
+                                    retrofit = new Retrofit.Builder()
+                                            .baseUrl(Helpers.connection())
+                                            .addConverterFactory(GsonConverterFactory.create())
+                                            .build();
+                                } catch (Exception e) {
+                                    throw new RuntimeException(e);
+                                }
+                                try {
+                                    AccidentDetectionActivity_back.LocationPostService service = retrofit.create(AccidentDetectionActivity_back.LocationPostService.class);
+                                    LocationPost locationPostBody = new LocationPost();
+                                    locationPostBody.setLatitude(latitude);
+                                    locationPostBody.setLongitude(longitude);
+                                    locationPostBody.setUser_id("xc");
+
+                                    Call<Object> call= service.postAccidentLocation(locationPostBody);
+                                    //  retrofit2.Response response = call.execute();
+                                    Response response = call.execute();
+                                    //Object response = call.execute();
+                                    System.out.println(response.body());
+                                    user u = new Gson().fromJson(response.body().toString(), user.class);
+                                    System.out.println(u.getEmail());
+                                } catch (IOException e) {
+                                    Exception cv = e;
+                                    System.out.println(cv);
+                                } catch (Exception ex) {
+                                    Exception cv = ex;
+                                    System.out.println(cv);
+                                }
+                                //==============================================================
+
+
+                                dialog.dismiss();
+                            }
+                        });
+                alertDialog.show();
             }
         }
-    }
-    */
+    }*/
+
     private static final int MOVING_AVG_WINDOW_SIZE = 5; // Adjust this value to control the smoothing
     private float[] movingAvgX = new float[MOVING_AVG_WINDOW_SIZE];
     private float[] movingAvgY = new float[MOVING_AVG_WINDOW_SIZE];
@@ -260,7 +356,84 @@ public class AccidentDetectionActivity extends AppCompatActivity implements Sens
                     //=================================================
 
                     isAccidentDetected = true;
-                    showAccidentAlert();
+                  //  showAccidentAlert();
+
+                    AlertDialog alertDialog3 = new AlertDialog.Builder(AccidentDetectionActivity.this).create();
+                    alertDialog3.dismiss();
+                    AlertDialog alertDialog = new AlertDialog.Builder(AccidentDetectionActivity.this).create();
+                    alertDialog.setTitle("Alert");
+                    alertDialog.setMessage("Accident Detected");
+                    alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "Confirm",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+
+
+                                    //==============================================
+
+                                    //================================================
+
+
+                                    //======================Firebase Notification====================================
+                                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+                                        NotificationChannel channel = new NotificationChannel("accident_detection", "accident_detection", NotificationManager.IMPORTANCE_DEFAULT);
+                                        NotificationManager manager = getSystemService(NotificationManager.class);
+                                        manager.createNotificationChannel(channel);
+                                    }
+                                    NotificationCompat.Builder builder = new NotificationCompat.Builder(AccidentDetectionActivity.this, "accident_detection")
+                                            .setContentTitle("Accident Detection")
+                                            .setSmallIcon(R.drawable.baseline_notifications_active_24)
+                                            .setAutoCancel(true)
+                                            .setContentText("Alert, Accident Might Have Happened !");
+
+                                    notification = builder.build();
+                                    notificationManagerCompat = NotificationManagerCompat.from(AccidentDetectionActivity.this);
+
+                                    push();
+                                    //=================================================================
+
+                                    getLastLocation();
+                                    // Notify emergency services
+
+                                    //========================Post Location=====================================
+                                    Retrofit retrofit = null;
+                                    try {
+                                        retrofit = new Retrofit.Builder()
+                                                .baseUrl(Helpers.connection())
+                                                .addConverterFactory(GsonConverterFactory.create())
+                                                .build();
+                                    } catch (Exception e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                    try {
+                                        AccidentDetectionActivity_back.LocationPostService service = retrofit.create(AccidentDetectionActivity_back.LocationPostService.class);
+                                        LocationPost locationPostBody = new LocationPost();
+                                        locationPostBody.setLatitude(latitude);
+                                        locationPostBody.setLongitude(longitude);
+                                        locationPostBody.setUser_id("xc");
+
+                                        Call<Object> call= service.postAccidentLocation(locationPostBody);
+                                        //  retrofit2.Response response = call.execute();
+                                        Response response = call.execute();
+                                        //Object response = call.execute();
+                                        System.out.println(response.body());
+                                        user u = new Gson().fromJson(response.body().toString(), user.class);
+                                        System.out.println(u.getEmail());
+                                    } catch (IOException e) {
+                                        Exception cv = e;
+                                        System.out.println(cv);
+                                    } catch (Exception ex) {
+                                        Exception cv = ex;
+                                        System.out.println(cv);
+                                    }
+                                    //==============================================================
+
+
+                                    dialog.dismiss();
+                                }
+                            });
+                    alertDialog.show();
+
+
                 }
             } else {
                 isAccidentDetected = false;
@@ -471,7 +644,19 @@ public class AccidentDetectionActivity extends AppCompatActivity implements Sens
 
 
     //====================================================================================================
-
+    public void push() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        notificationManagerCompat.notify(1, notification);
+    }
 
     public void push(View view) {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {

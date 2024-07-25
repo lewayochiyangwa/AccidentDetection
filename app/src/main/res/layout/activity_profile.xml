@@ -1,236 +1,188 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white">
+    tools:context=".ProfileActivity">
 
-    <!-- Header -->
-    <RelativeLayout
-        android:id="@+id/rl_header"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#6A1818"
-        android:paddingTop="16dp"
-        android:paddingBottom="16dp"
-        android:gravity="center_horizontal"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Profile Image with White Circle Background -->
-        <RelativeLayout
-            android:layout_width="120dp"
-            android:layout_height="120dp"
-            android:layout_centerHorizontal="true"
-            android:background="@drawable/circle_background"
-            android:gravity="center">
-
-            <ImageView
-                android:id="@+id/iv_profile_image"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:contentDescription="Profile Image"
-                android:src="@drawable/baseline_person_24" />
-
-        </RelativeLayout>
-
-        <!-- Edit Profile Image Icon -->
-        <ImageView
-            android:id="@+id/icon_edit_profile_image"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:layout_below="@id/iv_profile_image"
-            android:layout_marginTop="8dp"
-            android:layout_centerHorizontal="true"
-            android:src="@drawable/baseline_camera_alt_24"
-            android:contentDescription="Edit Profile Image"
-            tools:ignore="NotSibling" />
-
-    </RelativeLayout>
-
-    <!-- Full Name -->
-    <TextView
-        android:id="@+id/tv_full_name_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Full Name"
-        android:textSize="18sp"
-        app:layout_constraintTop_toBottomOf="@id/rl_header"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="32dp"/>
-
-    <EditText
-        android:id="@+id/et_full_name"
-        android:layout_width="0dp"
-        android:layout_height="48dp"
-        android:hint="Enter Full Name"
-        app:layout_constraintTop_toBottomOf="@id/tv_full_name_label"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/icon_edit_full_name"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:paddingBottom="4dp" />
-
-    <!-- Edit Full Name Icon -->
-    <ImageView
-        android:id="@+id/icon_edit_full_name"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintTop_toBottomOf="@id/rl_header"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="409dp"
+        android:layout_height="729dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:src="@drawable/baseline_edit_24"
-        android:contentDescription="Edit Full Name" />
-
-    <!-- Email -->
-    <TextView
-        android:id="@+id/tv_email_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Email"
-        android:textSize="18sp"
-        app:layout_constraintTop_toBottomOf="@id/et_full_name"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="24dp"/>
+        app:layout_constraintTop_toTopOf="parent">
 
-    <EditText
-        android:id="@+id/et_email"
-        android:layout_width="0dp"
-        android:layout_height="48dp"
-        android:hint="Enter Email"
-        app:layout_constraintTop_toBottomOf="@id/tv_email_label"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/icon_edit_email"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:paddingBottom="4dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="10dp"
+                >
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:textStyle="bold"
+                    android:text="Enter Your Name*">
+                </TextView>
+                <EditText
+                    android:id="@+id/name"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@drawable/edit_text_border"
+                    android:padding="8dp"
+                    android:layout_margin="8dp"
+                    android:hint="Enter your name" />
+            </LinearLayout>
 
-    <!-- Edit Email Icon -->
-    <ImageView
-        android:id="@+id/icon_edit_email"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintTop_toBottomOf="@id/et_full_name"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:src="@drawable/baseline_edit_24"
-        android:contentDescription="Edit Email" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="10dp"
+                >
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:textStyle="bold"
+                    android:text="Enter Your Email*">
+                </TextView>
+                <EditText
+                    android:id="@+id/email"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@drawable/edit_text_border"
+                    android:padding="8dp"
+                    android:layout_margin="8dp"
+                    android:hint="Enter your email" />
+            </LinearLayout>
 
-    <!-- Allergies -->
-    <TextView
-        android:id="@+id/tv_allergies_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Allergies"
-        android:textSize="18sp"
-        app:layout_constraintTop_toBottomOf="@id/et_email"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="24dp"/>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                >
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="10dp"
+                    android:textStyle="bold"
+                    android:text="Medical Insuarance*">
+                </TextView>
 
-    <EditText
-        android:id="@+id/et_allergies"
-        android:layout_width="0dp"
-        android:layout_height="48dp"
-        android:hint="Enter Allergies"
-        app:layout_constraintTop_toBottomOf="@id/tv_allergies_label"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/icon_edit_allergies"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:paddingBottom="4dp" />
+                <EditText
+                    android:id="@+id/medic"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@drawable/edit_text_border"
+                    android:padding="8dp"
+                    android:layout_margin="8dp"
+                    android:inputType="phone"
+                    android:hint="Enter Medical Insuarance" />
+            </LinearLayout>
 
-    <!-- Edit Allergies Icon -->
-    <ImageView
-        android:id="@+id/icon_edit_allergies"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintTop_toBottomOf="@id/et_email"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:src="@drawable/baseline_edit_24"
-        android:contentDescription="Edit Allergies" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                >
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="10dp"
+                    android:textStyle="bold"
+                    android:text="Allegies*">
+                </TextView>
 
-    <!-- Medical Insurance Info -->
-    <TextView
-        android:id="@+id/tv_medical_insurance_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Medical Insurance Info"
-        android:textSize="18sp"
-        app:layout_constraintTop_toBottomOf="@id/et_allergies"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="24dp"/>
+                <EditText
+                    android:id="@+id/allegy"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@drawable/edit_text_border"
+                    android:padding="8dp"
+                    android:layout_margin="8dp"
+                    android:inputType="phone"
+                    android:hint="Enter Allegies" />
+            </LinearLayout>
 
-    <EditText
-        android:id="@+id/et_medical_insurance"
-        android:layout_width="0dp"
-        android:layout_height="48dp"
-        android:hint="Enter Medical Insurance Info"
-        app:layout_constraintTop_toBottomOf="@id/tv_medical_insurance_label"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/icon_edit_medical_insurance"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:paddingBottom="4dp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                >
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="10dp"
+                    android:textStyle="bold"
+                    android:inputType="phone"
+                    android:text="emergency contact*">
+                </TextView>
 
-    <!-- Edit Medical Insurance Info Icon -->
-    <ImageView
-        android:id="@+id/icon_edit_medical_insurance"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="16dp"
-        app:layout_constraintTop_toBottomOf="@id/et_allergies"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:src="@drawable/baseline_edit_24"
-        android:contentDescription="Edit Medical Insurance Info" />
+                <EditText
+                    android:id="@+id/contacts"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="@drawable/edit_text_border"
+                    android:padding="8dp"
+                    android:layout_margin="8dp"
+                    android:inputType="phone"
+                    android:hint="Enter  Emergency Contacts" />
+            </LinearLayout>
 
-    <!-- Emergency Contact -->
-    <TextView
-        android:id="@+id/tv_emergency_contact_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Emergency Contact"
-        android:textSize="18sp"
-        app:layout_constraintTop_toBottomOf="@id/et_medical_insurance"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="24dp"/>
 
-    <Button
-        android:id="@+id/btn_select_contact"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Select Contacts"
-        android:backgroundTint="@color/colorPrimaryDark"
-        app:layout_constraintTop_toBottomOf="@id/tv_emergency_contact_label"
-        app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginStart="16dp"
-        android:onClick="selectContacts"/>
 
-    <!-- Save Button -->
-    <Button
-        android:id="@+id/btn_save"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="Save"
-        android:backgroundTint="@color/colorPrimaryDark"
-        app:layout_constraintTop_toBottomOf="@id/btn_select_contact"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="32dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:onClick="saveProfile"/>
 
+
+
+
+
+
+          <!--  <ImageView
+                android:id="@+id/mPhotoImageView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:srcCompat="@tools:sample/avatars" />
+
+            <Button
+                android:id="@+id/btnTakePicture"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Take Picture" />-->
+
+            <Button
+                android:id="@+id/submit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Submit"
+                android:onClick="submit" />
+
+            <Button
+                android:id="@+id/back_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Back"
+                android:onClick="submit" />
+        </LinearLayout>
+
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

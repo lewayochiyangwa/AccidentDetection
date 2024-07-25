@@ -39,13 +39,14 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <Button
+           <Button
                 android:id="@+id/back_detection_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:backgroundTint="#673AB7"
                 android:text="Back"
                 android:textColor="@android:color/white" />
+
 
             <Button
                 android:id="@+id/start_detection_button"
@@ -211,6 +212,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:background="@drawable/border"
+                android:visibility="gone"
                 android:padding="8dp">
                 <ImageView
                     android:id="@+id/decibel_meter_image"
@@ -245,8 +247,17 @@
                 android:layout_marginTop="56dp"
                 android:backgroundTint="@color/colorPrimaryDark"
                 android:text="@string/stop_detection"
+                android:visibility="gone"
                 android:textColor="@android:color/white" />
         </LinearLayout>
+
+        <ImageView
+            android:id="@+id/back_button"
+            android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="toastLove"
+            android:visibility="gone"
+        android:src="@drawable/backbutton"/>
     </RelativeLayout>
 </ScrollView>
 
